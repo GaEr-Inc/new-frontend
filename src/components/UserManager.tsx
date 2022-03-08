@@ -1,5 +1,6 @@
 import { useAgile } from "@agile-ts/react";
-import { Badge, Box, Button, Table, Text } from "@mantine/core";
+import { ActionIcon, Badge, Box, Button, Table, Text, ThemeIcon } from "@mantine/core";
+import { EyeIcon, PencilIcon } from "@primer/octicons-react";
 import React from "react";
 import { NUMBERS, NUMBERS_RED, USERS_STATE } from "../utils/globalStates";
 import { User } from "../utils/interfaces";
@@ -17,11 +18,12 @@ function UserManager() {
             <th>Telefono</th>
             <th>Numeros</th>
             <th>Numeros Aleatorios</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user: User) => (
-            <tr>
+            <tr key={user.id}>
               <td>
                 <Text  size="md">{user.name}</Text>
               </td>
@@ -51,10 +53,15 @@ function UserManager() {
               </td>
               <td>
                 <>
-                  <Badge style={{ marginLeft: 3 }} color='red' variant="outline">Rojo {user.maxRandomNumbers.red}</Badge>  
-                  <Badge style={{ marginLeft: 3 }} color='green' variant="outline">Verde {user.maxRandomNumbers.green}</Badge>  
-                  <Badge style={{ marginLeft: 3 }} variant="outline">Azul {user.maxRandomNumbers.blue}</Badge>  
+                  <Badge  style={{ marginRight: 2 }} color='red' variant="outline">{user.maxRandomNumbers.red}</Badge>  
+                  <Badge style={{ marginInline: 2 }} color='green' variant="outline">{user.maxRandomNumbers.green}</Badge>  
+                  <Badge style={{ marginLeft: 2 }} variant="outline">{user.maxRandomNumbers.blue}</Badge>  
                 </>
+              </td>
+              <td>
+                <ThemeIcon onClick={() => console.log("Hello")} radius={10}>
+                  <PencilIcon/>
+                </ThemeIcon>
               </td>
             </tr>
           ))}
@@ -63,5 +70,7 @@ function UserManager() {
     </div>
   );
 }
+
+
 
 export default UserManager;
