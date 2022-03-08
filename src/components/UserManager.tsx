@@ -132,7 +132,7 @@ function UserManager() {
   }
   return (
     <div>
-      <Table>
+      <Table highlightOnHover>
         <thead>
           <tr>
             <th>Nombre</th>
