@@ -24,6 +24,36 @@ export function deleteUserById(id:string) {
   axios.delete(`${server}/db/users/delete/${id}`)
 }
 
+export function updateUserToDB(user: User) {
+  axios.post(`${server}/db/users/update`,  
+    {
+      "id": user.id,
+      "name": user.name,
+      "phoneNumber": user.phoneNumber,
+      "numbers": {
+        "red": {
+          "asignedNumbers": user.numbers.red.asignedNumbers,
+          "randomNumbers": user.numbers.red.randomNumbers
+        },
+        "green": {
+          "asignedNumbers": user.numbers.green.asignedNumbers,
+          "randomNumbers": user.numbers.green.randomNumbers
+        },
+        "blue": {
+          "asignedNumbers": user.numbers.blue.asignedNumbers,
+          "randomNumbers": user.numbers.blue.randomNumbers
+        }
+      },
+      "maxRandomNumbers": {
+        "red": user.maxRandomNumbers.red,
+        "green": user.maxRandomNumbers.green,
+        "blue": user.maxRandomNumbers.blue
+      }
+    }
+  
+  )
+}
+
 export async function updateAll() {
   USERS_STATE.set(await getUsers());
   NUMBERS.set(await getNumbers());

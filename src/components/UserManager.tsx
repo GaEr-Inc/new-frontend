@@ -7,6 +7,7 @@ import {
   Checkbox,
   Loader,
   Modal,
+  NumberInput,
   ScrollArea,
   Table,
   Tabs,
@@ -33,7 +34,7 @@ import {
   USERS_STATE,
 } from "../utils/globalStates";
 import { User } from "../utils/interfaces";
-import { deleteUserById, getNumbersByColor, getUsers } from "../utils/requests";
+import { deleteUserById, getNumbersByColor, getUsers, updateUserToDB } from "../utils/requests";
 
 function UserManager() {
   const uuid = useId();
@@ -42,24 +43,15 @@ function UserManager() {
     initialValues: {
       name: "",
       number: "",
+      red: 0,
+      green: 0,
+      blue: 0
     },
   });
   const [userReds, setuserReds] = useState<TransferListData>([[], []]);
-  const [userRandomReds, setRandomuserReds] = useState<TransferListData>([
-    [],
-    [],
-  ]);
   const [userGreens, setuserGreens] = useState<TransferListData>([[], []]);
-  const [userRandomGreens, setuserRandomGreens] = useState<TransferListData>([
-    [],
-    [],
-  ]);
   const [userBlues, setuserBlues] = useState<TransferListData>([[], []]);
-  const [userRandomBlues, setuserRandomBlues] = useState<TransferListData>([
-    [],
-    [],
-  ]);
-  const editUser = async (user: User, randoms: boolean) => {
+  const editUser = (user: User) => {
     let redGlobals: TransferListData = [[], []];
     const currentReds = NUMBERS_RED._value;
     currentReds.map((num) =>
@@ -120,10 +112,24 @@ function UserManager() {
       })
     );
     setuserBlues(blueGlobals);
+    return user;
   };
 
   const [opened, setOpened] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User | undefined >();
   const [userId, setUserId] = useState<string>("");
+  const updateUser = (user: User, ) => {
+    const newReds: number[] = [] 
+    userReds[1].map(num => num.group === "Aleatorio" ? console.log("Aleatorio") : newReds.push(parseInt(num.value)))
+    const newGreens: number[] = [] 
+    userGreens[1].map(num => num.group === "Aleatorio" ? console.log("Aleatorio") : newGreens.push(parseInt(num.value)))
+    const newBlues: number[] = []
+    userBlues[1].map(num => num.group === "Aleatorio" ? console.log("Aleatorio") : newBlues.push(parseInt(num.value)))
+    user.numbers.red.asignedNumbers = newReds
+    user.numbers.green.asignedNumbers = newGreens
+    user.numbers.blue.asignedNumbers = newBlues
+
+  }
   return (
     <div>
       <Table>
@@ -196,6 +202,7 @@ function UserManager() {
                     onClick={() => {
                       setOpened(true);
                       setUserId(user.id);
+                      setCurrentUser(user);
                       editUser(user);
                     }}
                     radius={10}
@@ -222,7 +229,24 @@ function UserManager() {
         }}
         title="Editar Usuario"
       >
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form onSubmit={form.onSubmit((values: {name: string, number: string, red: number, green: number, blue: number}) => {
+          const editedUser: User | undefined = currentUser? editUser(currentUser) : undefined
+          if (editedUser) {
+            editedUser.name = values.name
+            editedUser.phoneNumber= values.number
+            editedUser.maxRandomNumbers.red= values.red
+            editedUser.maxRandomNumbers.green= values.green
+            editedUser.maxRandomNumbers.blue= values.blue
+            updateUser(editedUser);
+            updateUserToDB(editedUser)
+            console.log(values);
+            form.reset()
+
+          }
+
+          
+
+        })}>
           <TextInput
             required
             label="Nombre"
@@ -235,6 +259,9 @@ function UserManager() {
             placeholder="your@email.com"
             {...form.getInputProps("number")}
           />
+          <NumberInput required label="Numeros Aleatorios Rojos" {...form.getInputProps("red")}/>
+          <NumberInput required label="Numeros Aleatorios Verdes" {...form.getInputProps("green")}/>
+          <NumberInput required label="Numeros Aleatorios Azules" {...form.getInputProps("blue")}/>
           <Tabs>
             <Tabs.Tab color="red" label="Rojos" icon={<ListUnorderedIcon />}>
               <TransferList
@@ -268,5 +295,4 @@ function UserManager() {
     </div>
   );
 }
-
 export default UserManager;
