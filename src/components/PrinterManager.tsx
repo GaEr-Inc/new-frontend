@@ -1,7 +1,20 @@
 import { Button, Switch, Table, useMantineTheme } from "@mantine/core";
 import { Calendar, DatePicker, isSameDate } from "@mantine/dates";
 import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale"
 import React, { useState } from "react";
+
+dayjs.extend(updateLocale)
+
+dayjs.updateLocale('en', {
+  weekdays: [
+    "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"
+  ],
+  months: [
+    "de Enero del", "de Febrero del", "de Marzo del", "de Abril del", "de Mayo del", "de Junio del", "de Julio del",
+    "de Agosto del", "de Septiembre del", "de Octubre del", "de Noviembre del", "de Diciembre del"
+  ]
+})
 
 export interface day {
   date: string;
@@ -19,8 +32,9 @@ function PrinterManager() {
   const [checked, setChecked] = useState<boolean>(false);
   const theme = useMantineTheme();
   const inputFormat = values
-    .map((date) => dayjs(date).format("DD/MM/YY"))
+    .map((date) => dayjs(date).format("dddd DD MMMM YYYY"))
     .join(", ");
+  const datesWithFormat = inputFormat.split(",");
   const dayStyle = (date: Date) => {
     if (values.some((day) => isSameDate(date, day))) {
       return {
@@ -42,7 +56,7 @@ function PrinterManager() {
 
   const days: day[] = [
     {
-      date: "22 Febrero 2022",
+      date: datesWithFormat[0],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -52,7 +66,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "23 Febrero 2022",
+      date: datesWithFormat[1],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -62,7 +76,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: "24 Febrero 2022",
+      date: datesWithFormat[2],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -72,7 +86,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "25 Febrero 2022",
+      date: datesWithFormat[3],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -82,7 +96,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: "26 Febrero 2022",
+      date: datesWithFormat[4],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -92,7 +106,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "27 Febrero 2022",
+      date: datesWithFormat[5],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -102,7 +116,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: "28 Febrero 2022",
+      date: datesWithFormat[6],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -112,7 +126,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "29 Febrero 2022",
+      date: datesWithFormat[7],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -122,7 +136,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: "30 Febrero 2022",
+      date: datesWithFormat[8],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -132,7 +146,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "31 Febrero 2022",
+      date: datesWithFormat[9],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -142,7 +156,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: "32 Febrero 2022",
+      date: datesWithFormat[10],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -152,7 +166,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "33 Febrero 2022",
+      date: datesWithFormat[11],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -162,7 +176,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: "34 Febrero 2022",
+      date: datesWithFormat[12],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -172,7 +186,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "35 Febrero 2022",
+      date: datesWithFormat[13],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -182,7 +196,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: "36 Febrero 2022",
+      date: datesWithFormat[14],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -192,7 +206,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "37 Febrero 2022",
+      date: datesWithFormat[15],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -202,7 +216,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: "38 Febrero 2022",
+      date: datesWithFormat[16],
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -212,7 +226,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: "39 Febrero 2022",
+      date: datesWithFormat[17],
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -297,7 +311,7 @@ function PrinterManager() {
         </thead>
         <tbody>{rows}</tbody>
       </Table>
-      <Button onClick={() => console.log(rows.length)}>Imprimir dates</Button>
+      <Button onClick={() => console.log(datesWithFormat)}>Imprimir dates</Button>
     </div>
   );
 }
