@@ -250,13 +250,13 @@ function UserManager() {
           <TextInput
             required
             label="Nombre"
-            placeholder=""
+            placeholder="Antonio"
             {...form.getInputProps("name")}
           />
           <TextInput
             required
             label="Numero"
-            placeholder="your@email.com"
+            placeholder="31000000"
             {...form.getInputProps("number")}
           />
           <NumberInput required label="Numeros Aleatorios Rojos" {...form.getInputProps("red")}/>
@@ -266,7 +266,7 @@ function UserManager() {
             <Tabs.Tab color="red" label="Rojos" icon={<ListUnorderedIcon />}>
               <TransferList
                 searchPlaceholder="Busqueda..."
-                nothingFound="No se encontro"
+                nothingFound="No se encontró..."
                 value={userReds}
                 onChange={setuserReds}
               />
