@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AppShell,
   Navbar,
@@ -14,6 +14,11 @@ import { Link, Route, Routes } from "react-router-dom";
 import UserManager from "./components/UserManager";
 import NavButton from "./NavButton";
 import Start from "./components/Start";
+import { useInterval } from "@mantine/hooks";
+import { TOKEN } from "./utils/globalStates";
+import { getToken, getUsers, updateAll } from "./utils/requests";
+import { useAgile } from "@agile-ts/react";
+import * as _ from "lodash"
 
 export const useStyles = createStyles((theme) => ({
   button: {
@@ -33,9 +38,28 @@ export const useStyles = createStyles((theme) => ({
 }));
 
 function App() {
+
+  const updateUsersInterval = useInterval(async () => {
+    if (!_.isEqual(await getToken(), TOKEN._value)) {
+      updateAll()
+      console.log("Globals Updated")
+      TOKEN.set(await getToken())
+    }
+  }, 200)
+
   const [opened, setOpened] = useState(false);
   const theme = useMantineTheme();
   const { classes } = useStyles();
+  
+  useEffect(() => {
+    updateUsersInterval.start()
+  
+    return () => {
+      updateUsersInterval.stop
+    }
+  }, [])
+  
+  
   return (
     <AppShell
       navbarOffsetBreakpoint="sm"
