@@ -126,7 +126,7 @@ function UserManager() {
   const [userId, setUserId] = useState<string>("");
   return (
     <div>
-      <Table>
+      <Table highlightOnHover>
         <thead>
           <tr>
             <th>Nombre</th>
