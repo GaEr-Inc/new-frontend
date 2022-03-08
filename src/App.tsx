@@ -23,6 +23,7 @@ import {
 import { Link, Route, Routes } from "react-router-dom";
 import UserManager from "./components/UserManager";
 import NavButton from "./NavButton";
+import PrinterManager from "./components/PrinterManager";
 import Start from "./components/Start";
 import { useInterval } from "@mantine/hooks";
 import { TOKEN } from "./utils/globalStates";
@@ -100,6 +101,13 @@ function App() {
                 label={"Administrar Usuarios"}
               />
             </Link>
+            <Link to="/printer" style={{ textDecoration: "none" }}>
+              <NavButton
+                icon={<PeopleIcon />}
+                color={"red"}
+                label={"Imprimir"}
+              />
+            </Link>
           </Navbar>
         }
         // Header
@@ -140,6 +148,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Start />} />
           <Route path="/users" element={<UserManager />} />
+          <Route path="/printer" element={<PrinterManager />} />
         </Routes>
       </AppShell>
     </MantineProvider>
