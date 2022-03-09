@@ -1,7 +1,15 @@
 import {
+  Avatar,
+  Badge,
   Button,
+  createStyles,
+  Group,
+  MultiSelect,
+  NativeSelect,
+  Select,
   Switch,
   Table,
+  Text,
   ThemeIcon,
   useMantineTheme,
 } from "@mantine/core";
@@ -9,7 +17,7 @@ import { Calendar, DatePicker, isSameDate } from "@mantine/dates";
 import { TrashIcon } from "@primer/octicons-react";
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
-import React, { useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 
 dayjs.extend(updateLocale);
@@ -51,7 +59,14 @@ export interface day {
   template: string;
 }
 
+const useStyles = createStyles((theme) => ({
+  weekend: {
+    color: `${theme.colors.blue[6]} !important`,
+  },
+}));
+
 function PrinterManager() {
+  const { classes, cx } = useStyles();
   const [values, setValues] = useState<Date[]>([]);
   const [checked, setChecked] = useState<boolean>(false);
   const [oneDayDate, setOneDayDate] = useState<Date>();
@@ -59,11 +74,11 @@ function PrinterManager() {
   const inputFormat = values
     .map((date) => dayjs(date).format("dddd DD MMMM YYYY"))
     .join(", ");
-  const datesWithFormat = inputFormat.split(",");
+  const [datesWithFormat, setDatesWithFormat] = useState<Date[]>(Array(18));
 
-  const days: day[] = [
+  const [days, setDays] = useState<day[]>([
     {
-      date: datesWithFormat[0],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -73,7 +88,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[1],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -83,7 +98,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: datesWithFormat[2],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -93,7 +108,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[3],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -103,7 +118,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: datesWithFormat[4],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -113,7 +128,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[5],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -123,7 +138,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: datesWithFormat[6],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -133,7 +148,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[7],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -143,7 +158,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: datesWithFormat[8],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -153,7 +168,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[9],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -163,7 +178,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: datesWithFormat[10],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -173,7 +188,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[11],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -183,7 +198,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: datesWithFormat[12],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -193,7 +208,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[13],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -203,7 +218,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: datesWithFormat[14],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -213,7 +228,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[15],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -223,7 +238,7 @@ function PrinterManager() {
       template: "blue",
     },
     {
-      date: datesWithFormat[16],
+      date: "",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
@@ -233,7 +248,7 @@ function PrinterManager() {
       template: "red",
     },
     {
-      date: datesWithFormat[17],
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -242,11 +257,38 @@ function PrinterManager() {
       prize: "260000",
       template: "blue",
     },
-  ];
+  ]);
 
-  const day: day[] = [
+  useEffect(() => {
+    console.log(days);
+  }, [days]);
+
+  function template(color: string) {
+    switch (color) {
+      case "red":
+        return (
+          <Badge style={{ marginRight: 3 }} color="red" variant="filled">
+            Rojo
+          </Badge>
+        );
+      case "green":
+        return (
+          <Badge style={{ marginInline: 3 }} color="green" variant="filled">
+            Verde
+          </Badge>
+        );
+      case "blue":
+        return (
+          <Badge style={{ marginLeft: 3 }} variant="filled">
+            Azul
+          </Badge>
+        );
+    }
+  }
+
+  const [day, setDay] = useState<day[]>([
     {
-      date: dayjs(oneDayDate).format("dddd DD MMMM YYYY").toString(),
+      date: "",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -254,74 +296,183 @@ function PrinterManager() {
       cost: "600",
       prize: "260000",
       template: "blue",
+    },
+  ]);
+
+  const selectData = [
+    {
+      image: "https://img.icons8.com/clouds/256/000000/futurama-bender.png",
+      label: "Bender Bending Rodríguez",
+      value: "Bender Bending Rodríguez",
+      description: "Fascinated with cooking",
+    },
+
+    {
+      image: "https://img.icons8.com/clouds/256/000000/futurama-mom.png",
+      label: "Carol Miller",
+      value: "Carol Miller",
+      description: "One of the richest people on Earth",
+    },
+    {
+      image: "https://img.icons8.com/clouds/256/000000/homer-simpson.png",
+      label: "Homer Simpson",
+      value: "Homer Simpson",
+      description: "Overweight, lazy, and often ignorant",
+    },
+    {
+      image:
+        "https://img.icons8.com/clouds/256/000000/spongebob-squarepants.png",
+      label: "Spongebob Squarepants",
+      value: "Spongebob Squarepants",
+      description: "Not just a sponge",
+    },
+    {
+      image: "https://img.icons8.com/office/160/000000/jake--v2.png",
+      label: "Jake",
+      value: "Jake",
+      description: "Not just a dog",
     },
   ];
 
   const rows = checked
-    ? days.map((day) => (
+    ? days.map((day, index) => (
         <tr key={nanoid()}>
-          <td>{day.date}</td>
           <td>
             <DatePicker
+              transition={"scale-y"}
               minDate={dayjs(new Date()).toDate()}
-              placeholder="Pick multiple days"
-              clearable={false}
-              // value={values.length > 0 ? values[0] : null}
-              // onChange={handleDayPick}
+              placeholder="Fecha de la boleta"
+              onChange={(date: Date) => {
+                const oldDays = days;
+                oldDays[index].date = dayjs(date)
+                  .format("dddd DD MMMM YYYY")
+                  .toString();
+                setDays(oldDays);
+                console.log(days);
+              }}
+              inputFormat={"dddd DD MMMM YYYY"}
+              dayClassName={(date, modifiers) =>
+                cx({
+                  [classes.weekend]: modifiers.weekend,
+                })
+              }
             />
-            <ThemeIcon
-              style={{ marginInline: 5 }}
-              onClick={() => console.log("holi")}
-              radius={10}
-            >
-              <TrashIcon />
-            </ThemeIcon>
+          </td>
+          <td>
+            <Select
+              placeholder="Seleccionar Plantilla"
+              itemComponent={forwardRef(
+                ({ image, label, description, ...others }, ref) => (
+                  <div ref={ref} {...others}>
+                    <Group noWrap>
+                      <Avatar src={image} />
+
+                      <div>
+                        <Text>{label}</Text>
+                        <Text size="xs" color="dimmed">
+                          {description}
+                        </Text>
+                      </div>
+                    </Group>
+                  </div>
+                )
+              )}
+              data={selectData}
+              searchable
+              maxDropdownHeight={310}
+              nothingFound="Nobody here"
+              filter={(value, item) =>
+                item.label?.toLowerCase().includes(value.toLowerCase().trim()) ||
+                item.description
+                  .toLowerCase()
+                  .includes(value.toLowerCase().trim())
+              }
+            />
           </td>
           <td>{day.lottery1}</td>
           <td>{day.lottery2}</td>
           <td>{day.encerrado}</td>
           <td>{day.cost}</td>
           <td>{day.prize}</td>
-          <td>{day.template}</td>
+          <td>{template(day.template)}</td>
         </tr>
       ))
     : day.map((day, index) => (
         <tr key={nanoid()}>
           <td>
             <DatePicker
+              transition={"scale-y"}
               minDate={dayjs(new Date()).toDate()}
               placeholder="Fecha de la boleta"
-              onChange={(date: Date) => setOneDayDate(date)}
+              onChange={(date: Date) => {
+                const oldDay = day;
+                oldDay.date = dayjs(date)
+                  .format("dddd DD MMMM YYYY")
+                  .toString();
+                setDay([oldDay]);
+                setOneDayDate(date);
+                console.log(day);
+              }}
               inputFormat={"dddd DD MMMM YYYY"}
               value={oneDayDate}
+              dayClassName={(date, modifiers) =>
+                cx({
+                  [classes.weekend]: modifiers.weekend,
+                })
+              }
             />
           </td>
           <td>
-            <ThemeIcon
-              style={{ marginInline: 5 }}
-              onClick={() => console.log("holi")}
-              radius={10}
-            >
-              <TrashIcon />
-            </ThemeIcon>
+            <Select
+              placeholder="Seleccionar Plantilla"
+              itemComponent={forwardRef(
+                ({ image, label, description, ...others }, ref) => (
+                  <div ref={ref} {...others}>
+                    <Group noWrap>
+                      <Avatar src={image} />
+
+                      <div>
+                        <Text>{label}</Text>
+                        <Text size="xs" color="dimmed">
+                          {description}
+                        </Text>
+                      </div>
+                    </Group>
+                  </div>
+                )
+              )}
+              data={selectData}
+              searchable
+              maxDropdownHeight={310}
+              nothingFound="Nobody here"
+              filter={(value, item) =>
+                item.label?.toLowerCase().includes(value.toLowerCase().trim()) ||
+                item.description
+                  .toLowerCase()
+                  .includes(value.toLowerCase().trim())
+              }
+            />
           </td>
           <td>{day.lottery1}</td>
           <td>{day.lottery2}</td>
           <td>{day.encerrado}</td>
           <td>{day.cost}</td>
           <td>{day.prize}</td>
-          <td>{day.template}</td>
+          <td>{template(day.template)}</td>
         </tr>
       ));
 
   return (
     <div>
       <Switch
+        label="<-- Cantidad de días a Imprimir"
+        onLabel="⠀18"
+        offLabel="01"
         checked={checked}
-        size="md"
+        size="lg"
         onChange={(event) => setChecked(event.currentTarget.checked)}
       />
-      <Table>
+      <Table highlightOnHover>
         <thead>
           <tr>
             <th>Fecha</th>
@@ -336,13 +487,7 @@ function PrinterManager() {
         </thead>
         <tbody>{rows}</tbody>
       </Table>
-      <Button
-        onClick={() =>
-          console.log(dayjs(oneDayDate).format("dddd DD MMMM YYYY").toString())
-        }
-      >
-        Imprimir dates
-      </Button>
+      <Button onClick={() => console.log(day)}>Imprimir dates</Button>
     </div>
   );
 }
