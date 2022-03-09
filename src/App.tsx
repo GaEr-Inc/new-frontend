@@ -15,6 +15,9 @@ import {
 } from "@mantine/core";
 import {
   DatabaseIcon,
+  FileCodeIcon,
+  FileMediaIcon,
+  FileSymlinkFileIcon,
   HomeIcon,
   MoonIcon,
   PeopleIcon,
@@ -28,6 +31,7 @@ import Start from "./components/Start";
 import { useInterval } from "@mantine/hooks";
 import { TOKEN } from "./utils/globalStates";
 import { getToken, getUsers, updateAll } from "./utils/requests";
+import TemplateEditor from "./components/TemplateEditor";
 import { useAgile } from "@agile-ts/react";
 import * as _ from "lodash";
 
@@ -97,14 +101,21 @@ function App() {
             <Link to="/users" style={{ textDecoration: "none" }}>
               <NavButton
                 icon={<PeopleIcon />}
-                color={"green"}
+                color="green"
                 label={"Administrar Usuarios"}
+              />
+            </Link>
+            <Link to="/templateEditor" style={{ textDecoration: "none" }}>
+              <NavButton
+                icon={<FileMediaIcon />}
+                color="grape"
+                label={"Plantillas"}
               />
             </Link>
             <Link to="/printer" style={{ textDecoration: "none" }}>
               <NavButton
-                icon={<PeopleIcon />}
-                color={"red"}
+                icon={<FileSymlinkFileIcon />}
+                color="red"
                 label={"Imprimir"}
               />
             </Link>
@@ -149,6 +160,7 @@ function App() {
           <Route path="/" element={<Start />} />
           <Route path="/users" element={<UserManager />} />
           <Route path="/printer" element={<PrinterManager />} />
+          <Route path="/templateEditor" element={<TemplateEditor />} />
         </Routes>
       </AppShell>
     </MantineProvider>

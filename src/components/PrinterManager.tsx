@@ -225,7 +225,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "green",
     },
     {
       date: "",
