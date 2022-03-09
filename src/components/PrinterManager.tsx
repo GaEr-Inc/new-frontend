@@ -1,20 +1,44 @@
-import { Button, Switch, Table, useMantineTheme } from "@mantine/core";
+import {
+  Button,
+  Switch,
+  Table,
+  ThemeIcon,
+  useMantineTheme,
+} from "@mantine/core";
 import { Calendar, DatePicker, isSameDate } from "@mantine/dates";
+import { TrashIcon } from "@primer/octicons-react";
 import dayjs from "dayjs";
-import updateLocale from "dayjs/plugin/updateLocale"
+import updateLocale from "dayjs/plugin/updateLocale";
 import React, { useState } from "react";
+import { nanoid } from "nanoid";
 
-dayjs.extend(updateLocale)
+dayjs.extend(updateLocale);
 
-dayjs.updateLocale('en', {
+dayjs.updateLocale("en", {
   weekdays: [
-    "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"
+    "Domingo",
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado",
   ],
   months: [
-    "de Enero del", "de Febrero del", "de Marzo del", "de Abril del", "de Mayo del", "de Junio del", "de Julio del",
-    "de Agosto del", "de Septiembre del", "de Octubre del", "de Noviembre del", "de Diciembre del"
-  ]
-})
+    "de Enero de",
+    "de Febrero de",
+    "de Marzo de",
+    "de Abril de",
+    "de Mayo de",
+    "de Junio de",
+    "de Julio de",
+    "de Agosto de",
+    "de Septiembre de",
+    "de Octubre de",
+    "de Noviembre de",
+    "de Diciembre de",
+  ],
+});
 
 export interface day {
   date: string;
@@ -30,29 +54,12 @@ export interface day {
 function PrinterManager() {
   const [values, setValues] = useState<Date[]>([]);
   const [checked, setChecked] = useState<boolean>(false);
+  const [oneDayDate, setOneDayDate] = useState<Date>();
   const theme = useMantineTheme();
   const inputFormat = values
     .map((date) => dayjs(date).format("dddd DD MMMM YYYY"))
     .join(", ");
   const datesWithFormat = inputFormat.split(",");
-  const dayStyle = (date: Date) => {
-    if (values.some((day) => isSameDate(date, day))) {
-      return {
-        backgroundColor: theme.colors.blue[0],
-        color: theme.colors.blue[9],
-      };
-    }
-    return {};
-  };
-
-  const handleDayPick = (value: Date) => {
-    setValues((current) => {
-      if (current.some((day) => isSameDate(value, day))) {
-        return current.filter((day) => !isSameDate(value, day));
-      }
-      return values.length < 18 ? [...current, value] : values;
-    });
-  };
 
   const days: day[] = [
     {
@@ -239,7 +246,7 @@ function PrinterManager() {
 
   const day: day[] = [
     {
-      date: "33 Febrero 2022",
+      date: dayjs(oneDayDate).format("dddd DD MMMM YYYY").toString(),
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
@@ -252,8 +259,24 @@ function PrinterManager() {
 
   const rows = checked
     ? days.map((day) => (
-        <tr key={day.date}>
+        <tr key={nanoid()}>
           <td>{day.date}</td>
+          <td>
+            <DatePicker
+              minDate={dayjs(new Date()).toDate()}
+              placeholder="Pick multiple days"
+              clearable={false}
+              // value={values.length > 0 ? values[0] : null}
+              // onChange={handleDayPick}
+            />
+            <ThemeIcon
+              style={{ marginInline: 5 }}
+              onClick={() => console.log("holi")}
+              radius={10}
+            >
+              <TrashIcon />
+            </ThemeIcon>
+          </td>
           <td>{day.lottery1}</td>
           <td>{day.lottery2}</td>
           <td>{day.encerrado}</td>
@@ -262,9 +285,26 @@ function PrinterManager() {
           <td>{day.template}</td>
         </tr>
       ))
-    : day.map((day) => (
-        <tr key={day.date}>
-          <td>{day.date}</td>
+    : day.map((day, index) => (
+        <tr key={nanoid()}>
+          <td>
+            <DatePicker
+              minDate={dayjs(new Date()).toDate()}
+              placeholder="Fecha de la boleta"
+              onChange={(date: Date) => setOneDayDate(date)}
+              inputFormat={"dddd DD MMMM YYYY"}
+              value={oneDayDate}
+            />
+          </td>
+          <td>
+            <ThemeIcon
+              style={{ marginInline: 5 }}
+              onClick={() => console.log("holi")}
+              radius={10}
+            >
+              <TrashIcon />
+            </ThemeIcon>
+          </td>
           <td>{day.lottery1}</td>
           <td>{day.lottery2}</td>
           <td>{day.encerrado}</td>
@@ -276,22 +316,6 @@ function PrinterManager() {
 
   return (
     <div>
-      <DatePicker
-        minDate={dayjs(new Date()).toDate()}
-        placeholder="Pick multiple days"
-        closeCalendarOnChange={true}
-        // inputFormat={inputFormat}
-        value={values.length > 0 ? values[0] : null}
-        onChange={handleDayPick}
-        dayStyle={dayStyle}
-        multiline
-        styles={{
-          selected: {
-            backgroundColor: "transparent",
-            color: "unset",
-          },
-        }}
-      />
       <Switch
         checked={checked}
         size="md"
@@ -301,6 +325,7 @@ function PrinterManager() {
         <thead>
           <tr>
             <th>Fecha</th>
+            <th>Plantilla</th>
             <th>Parte 1</th>
             <th>Parte 2</th>
             <th>Encerrado</th>
@@ -311,7 +336,13 @@ function PrinterManager() {
         </thead>
         <tbody>{rows}</tbody>
       </Table>
-      <Button onClick={() => console.log(datesWithFormat)}>Imprimir dates</Button>
+      <Button
+        onClick={() =>
+          console.log(dayjs(oneDayDate).format("dddd DD MMMM YYYY").toString())
+        }
+      >
+        Imprimir dates
+      </Button>
     </div>
   );
 }

@@ -132,7 +132,7 @@ function App() {
               </MediaQuery>
               <ActionIcon
                 style={{
-                  marginInline: 5,
+                  marginInline: 10,
                 }}
                 onClick={() => (dark ? setDark(false) : setDark(true))}
                 title="Toggle color scheme"
