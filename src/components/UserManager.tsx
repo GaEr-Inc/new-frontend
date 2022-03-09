@@ -1,6 +1,7 @@
 import { useAgile } from "@agile-ts/react";
 import {
   ActionIcon,
+  Affix,
   Badge,
   Box,
   Button,
@@ -16,13 +17,16 @@ import {
   ThemeIcon,
   TransferList,
   TransferListData,
+  Transition,
 } from "@mantine/core";
 import { useForm, useId } from "@mantine/hooks";
 import {
+  ArrowUpIcon,
   EyeIcon,
   ImageIcon,
   ListUnorderedIcon,
   PencilIcon,
+  PlusCircleIcon,
   TrashIcon,
 } from "@primer/octicons-react";
 import React, { useState } from "react";
@@ -34,7 +38,13 @@ import {
   USERS_STATE,
 } from "../utils/globalStates";
 import { User } from "../utils/interfaces";
-import { deleteUserById, getNumbersByColor, getUsers, updateUserToDB } from "../utils/requests";
+import {
+  addUser,
+  deleteUserById,
+  getNumbersByColor,
+  getUsers,
+  updateUserToDB,
+} from "../utils/requests";
 
 function UserManager() {
   const uuid = useId();
@@ -45,7 +55,7 @@ function UserManager() {
       number: "",
       red: 0,
       green: 0,
-      blue: 0
+      blue: 0,
     },
   });
   const [userReds, setuserReds] = useState<TransferListData>([[], []]);
@@ -116,20 +126,31 @@ function UserManager() {
   };
 
   const [opened, setOpened] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<User | undefined >();
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [userId, setUserId] = useState<string>("");
-  const updateUser = (user: User, ) => {
-    const newReds: number[] = [] 
-    userReds[1].map(num => num.group === "Aleatorio" ? console.log("Aleatorio") : newReds.push(parseInt(num.value)))
-    const newGreens: number[] = [] 
-    userGreens[1].map(num => num.group === "Aleatorio" ? console.log("Aleatorio") : newGreens.push(parseInt(num.value)))
-    const newBlues: number[] = []
-    userBlues[1].map(num => num.group === "Aleatorio" ? console.log("Aleatorio") : newBlues.push(parseInt(num.value)))
-    user.numbers.red.asignedNumbers = newReds
-    user.numbers.green.asignedNumbers = newGreens
-    user.numbers.blue.asignedNumbers = newBlues
-
-  }
+  const updateUser = (user: User) => {
+    const newReds: number[] = [];
+    userReds[1].map((num) =>
+      num.group === "Aleatorio"
+        ? console.log("Aleatorio")
+        : newReds.push(parseInt(num.value))
+    );
+    const newGreens: number[] = [];
+    userGreens[1].map((num) =>
+      num.group === "Aleatorio"
+        ? console.log("Aleatorio")
+        : newGreens.push(parseInt(num.value))
+    );
+    const newBlues: number[] = [];
+    userBlues[1].map((num) =>
+      num.group === "Aleatorio"
+        ? console.log("Aleatorio")
+        : newBlues.push(parseInt(num.value))
+    );
+    user.numbers.red.asignedNumbers = newReds;
+    user.numbers.green.asignedNumbers = newGreens;
+    user.numbers.blue.asignedNumbers = newBlues;
+  };
   return (
     <div>
       <Table highlightOnHover>
@@ -202,6 +223,11 @@ function UserManager() {
                     onClick={() => {
                       setOpened(true);
                       setUserId(user.id);
+                      form.setFieldValue("number", user.phoneNumber);
+                      form.setFieldValue("name", user.name);
+                      form.setFieldValue("red", user.maxRandomNumbers.red);
+                      form.setFieldValue("green", user.maxRandomNumbers.green);
+                      form.setFieldValue("blue", user.maxRandomNumbers.blue);
                       setCurrentUser(user);
                       editUser(user);
                     }}
@@ -229,24 +255,32 @@ function UserManager() {
         }}
         title="Editar Usuario"
       >
-        <form onSubmit={form.onSubmit((values: {name: string, number: string, red: number, green: number, blue: number}) => {
-          const editedUser: User | undefined = currentUser? editUser(currentUser) : undefined
-          if (editedUser) {
-            editedUser.name = values.name
-            editedUser.phoneNumber= values.number
-            editedUser.maxRandomNumbers.red= values.red
-            editedUser.maxRandomNumbers.green= values.green
-            editedUser.maxRandomNumbers.blue= values.blue
-            updateUser(editedUser);
-            updateUserToDB(editedUser)
-            console.log(values);
-            form.reset()
-
-          }
-
-          
-
-        })}>
+        <form
+          onSubmit={form.onSubmit(
+            (values: {
+              name: string;
+              number: string;
+              red: number;
+              green: number;
+              blue: number;
+            }) => {
+              const editedUser: User | undefined = currentUser
+                ? editUser(currentUser)
+                : undefined;
+              if (editedUser) {
+                editedUser.name = values.name;
+                editedUser.phoneNumber = values.number;
+                editedUser.maxRandomNumbers.red = values.red;
+                editedUser.maxRandomNumbers.green = values.green;
+                editedUser.maxRandomNumbers.blue = values.blue;
+                updateUser(editedUser);
+                userId === "nanoid" ? addUser(editedUser) : updateUserToDB(editedUser) 
+                console.log(values);
+                form.reset();
+              }
+            }
+          )}
+        >
           <TextInput
             required
             label="Nombre"
@@ -259,9 +293,21 @@ function UserManager() {
             placeholder="31000000"
             {...form.getInputProps("number")}
           />
-          <NumberInput required label="Numeros Aleatorios Rojos" {...form.getInputProps("red")}/>
-          <NumberInput required label="Numeros Aleatorios Verdes" {...form.getInputProps("green")}/>
-          <NumberInput required label="Numeros Aleatorios Azules" {...form.getInputProps("blue")}/>
+          <NumberInput
+            required
+            label="Numeros Aleatorios Rojos"
+            {...form.getInputProps("red")}
+          />
+          <NumberInput
+            required
+            label="Numeros Aleatorios Verdes"
+            {...form.getInputProps("green")}
+          />
+          <NumberInput
+            required
+            label="Numeros Aleatorios Azules"
+            {...form.getInputProps("blue")}
+          />
           <Tabs>
             <Tabs.Tab color="red" label="Rojos" icon={<ListUnorderedIcon />}>
               <TransferList
@@ -289,9 +335,35 @@ function UserManager() {
             </Tabs.Tab>
           </Tabs>
 
-          <Button style={{marginTop: 15}} type="submit">Submit</Button>
+          <Button style={{ marginTop: 15 }} type="submit">
+            Submit
+          </Button>
         </form>
       </Modal>
+      <Affix position={{ bottom: 20, right: 20 }}>
+        <Button
+          leftIcon={<PlusCircleIcon />}
+          onClick={() => {
+            let voidUser: User = {
+              name: "",
+              phoneNumber: "",
+              id: "nanoid",
+              maxRandomNumbers: { blue: 0, green: 0, red: 0 },
+              numbers: {
+                blue: { asignedNumbers: [], randomNumbers: [] },
+                green: { asignedNumbers: [], randomNumbers: [] },
+                red: { asignedNumbers: [], randomNumbers: [] },
+              },
+            };
+            form.reset()
+            setCurrentUser(voidUser);
+            setUserId("nanoid");
+            setOpened(true);
+          }}
+        >
+          Añadir Usuario
+        </Button>
+      </Affix>
     </div>
   );
 }
