@@ -19,19 +19,19 @@ import { nanoid } from "nanoid";
 import { PencilIcon, TrashIcon } from "@primer/octicons-react";
 import * as lodash from "lodash";
 
-export interface templates {
+export interface template {
   id: string;
-  templateName: string;
+  name: string;
   color: string;
   prize: string;
-  upperName: string;
-  lowerName: string;
+  lottery1: string;
+  lottery2: string;
   price: string;
   encerrado: string;
 }
 
 function TemplateEditor() {
-  const [templateSaves, setTemplateSaves] = useState<templates[]>(
+  const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
   );
   const [editPopOver, setEditPopOver] = useState<boolean>(false);
@@ -39,30 +39,30 @@ function TemplateEditor() {
   const form = useForm({
     initialValues: {
       id: "",
-      templateName: "",
+      name: "",
       color: "",
       prize: "",
-      upperName: "",
-      lowerName: "",
+      lottery1: "",
+      lottery2: "",
       price: "",
       encerrado: "",
     },
     validationRules: {
-      templateName: (value) => value.length > 2,
+      name: (value) => value.length > 2,
       color: (value) =>
         value === "red" || value === "blue" || value === "green",
       prize: (value) => value.length > 0,
-      upperName: (value) => value.length < 11,
-      lowerName: (value) => value.length < 11,
+      lottery1: (value) => value.length < 11,
+      lottery2: (value) => value.length < 11,
       price: (value) => value.length > 0,
       encerrado: (value) => value.length > 0,
     },
     errorMessages: {
-      templateName: "El nombre debe tener mas de dos caracteres",
+      name: "El nombre debe tener mas de dos caracteres",
       color: "Debe seleccionar un color",
       prize: "Debe ingresar el valor del premio",
-      upperName: "El primer nombre escrito debe ser más corto",
-      lowerName: "El primer nombre escrito debe ser más corto",
+      lottery1: "El primer nombre escrito debe ser más corto",
+      lottery2: "El primer nombre escrito debe ser más corto",
       price: "Debe ingresar el precio de la boleta",
       encerrado: "Debe ingresar el precio del encerrado",
     },
@@ -74,20 +74,20 @@ function TemplateEditor() {
     localStorage.setItem("saves", JSON.stringify(newArray));
   }
 
-  function saveTemplates(data: templates) {
+  function saveTemplates(data: template) {
     const newSaves = templateSaves;
     newSaves.push(data);
     setTemplateSaves(newSaves);
     localStorage.setItem("saves", JSON.stringify(templateSaves));
   }
 
-  function editTemplateByValue(value: templates) {
+  function editTemplateByValue(value: template) {
     form.setValues(value);
   }
 
   const templateRows = templateSaves.map((element, index) => (
     <tr key={element.id}>
-      <td>{element.templateName}</td>
+      <td>{element.name}</td>
       <td>
         <Group position="right" spacing="xs">
           <ActionIcon
@@ -127,8 +127,8 @@ function TemplateEditor() {
             radius="md"
             src={`http://localhost:4000/svg/generate/${
               form.values.color ? form.values.color : "blue"
-            }/fecha/${form.values.upperName ? form.values.upperName : " "}/${
-              form.values.lowerName ? form.values.lowerName : " "
+            }/fecha/${form.values.lottery1 ? form.values.lottery1 : " "}/${
+              form.values.lottery2 ? form.values.lottery2 : " "
             }/${form.values.encerrado ? form.values.encerrado : " "}/000/${
               form.values.price ? form.values.price : " "
             }/${form.values.prize ? form.values.prize : " "}/`}
@@ -147,7 +147,7 @@ function TemplateEditor() {
               required
               label="Nombre Guardado"
               placeholder="Nombre de la plantilla"
-              {...form.getInputProps("templateName")}
+              {...form.getInputProps("name")}
             />
             <Select
               {...form.getInputProps("color")}
@@ -200,7 +200,7 @@ function TemplateEditor() {
               min={0}
             />
             <TextInput
-              {...form.getInputProps("upperName")}
+              {...form.getInputProps("lottery1")}
               data-autofocus
               required
               placeholder="Chontico"
@@ -211,7 +211,7 @@ function TemplateEditor() {
               required
               placeholder="Noche"
               label="Nombre Inferior"
-              {...form.getInputProps("lowerName")}
+              {...form.getInputProps("lottery2")}
             />
             <Group grow>
               <TextInput

@@ -60,7 +60,7 @@ export interface day {
   number: number;
   cost: string;
   prize: string;
-  template: string;
+  template: 'red' | 'green' | 'blue' | '';
 }
 
 const useStyles = createStyles((theme) => ({
@@ -80,7 +80,6 @@ function PrinterManager() {
     .map((date) => dayjs(date).format("dddd DD MMMM YYYY"))
     .join(", ");
   const [datesWithFormat, setDatesWithFormat] = useState<Date[]>(Array(18));
-
   const [days, setDays] = useState<day[]>([
     {
       date: "",
@@ -430,37 +429,24 @@ function PrinterManager() {
             />
           </td>
           <td>
-            <Select
-              placeholder="Seleccionar Plantilla"
-              itemComponent={forwardRef(
-                ({ image, label, description, ...others }, ref) => (
-                  <div ref={ref} {...others}>
-                    <Group noWrap>
-                      <Avatar src={image} />
+              <Select
+              onChange={(val) => {
+                const selectedTemplate =_.filter(JSON.parse(localStorage.getItem('saves') || '[]'), (data) => data.id === val)[0]
+                console.log(selectedTemplate)
+                const oldDay = day
+                oldDay.cost = selectedTemplate.price
+                oldDay.encerrado= selectedTemplate.encerrado
+                oldDay.lottery2= selectedTemplate.lowerName
+                oldDay.lottery1= selectedTemplate.upperName
+                oldDay.prize = selectedTemplate.prize
+                
 
-                      <div>
-                        <Text>{label}</Text>
-                        <Text size="xs" color="dimmed">
-                          {description}
-                        </Text>
-                      </div>
-                    </Group>
-                  </div>
-                )
-              )}
-              data={selectData}
-              searchable
-              maxDropdownHeight={310}
-              nothingFound="Nobody here"
-              filter={(value, item) =>
-                item.label
-                  ?.toLowerCase()
-                  .includes(value.toLowerCase().trim()) ||
-                item.description
-                  .toLowerCase()
-                  .includes(value.toLowerCase().trim())
-              }
-            />
+                setDay([oldDay])
+                // oldDay.cost = selectedTemplate.p
+              }}
+              data={makeData()}>
+                
+              </Select>
           </td>
           <td>{day.lottery1}</td>
           <td>{day.lottery2}</td>
@@ -493,6 +479,16 @@ function PrinterManager() {
         return;
       }
     }
+  }
+
+  function makeData() {
+    const saves = JSON.parse(localStorage.getItem('saves') || '[]')
+    const toReturn: { value: string; label: string; }[] = []
+    saves.map((save: any) => {
+      toReturn.push({value: save.id, label: save.templateName})
+    })
+    return toReturn;
+    
   }
 
   return (

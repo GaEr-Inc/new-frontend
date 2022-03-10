@@ -41,6 +41,7 @@ import BackendConfigurator from "./components/BackendConfigurator";
 import { restartBackend, stopBackend } from "./utils/commands";
 import { shared } from "@agile-ts/core";
 import { NotificationsProvider } from "@mantine/notifications";
+import PrinterReWork from "./components/PrinterReWork";
 
 export const useStyles = createStyles((theme) => ({
   button: {
@@ -213,6 +214,7 @@ function App() {
             <Route path="/" element={<Start />} />
             <Route path="/users" element={<UserManager />} />
             <Route path="/printer" element={<PrinterManager />} />
+            <Route path="/printerrework" element={<PrinterReWork />} />
             <Route path="/templateEditor" element={<TemplateEditor />} />
           </Routes>
         </AppShell>

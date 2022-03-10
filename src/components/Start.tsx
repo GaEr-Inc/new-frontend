@@ -39,7 +39,7 @@ function Start() {
        : 
         <Grid>
           {files.map((file, index) => (
-            <Grid.Col key={nanoid()} span={3} style={{ width: 340 }}>
+            <Grid.Col key={nanoid()} span={3} style={{ width: 340, minWidth: 310 }}>
               <Card shadow="sm" >
                 <Group
                   position="apart"
