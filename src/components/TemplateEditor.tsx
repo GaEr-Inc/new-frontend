@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import {
+  ActionIcon,
   Badge,
   Button,
   Checkbox,
@@ -7,15 +8,33 @@ import {
   Group,
   Image,
   NumberInput,
+  Popover,
   Select,
   Space,
+  Table,
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
 import { nanoid } from "nanoid";
+import { PencilIcon, TrashIcon } from "@primer/octicons-react";
+import * as lodash from "lodash";
+
+export interface templates {
+  id: string;
+  templateName: string;
+  color: string;
+  prize: string;
+  upperName: string;
+  lowerName: string;
+  price: string;
+  encerrado: string;
+}
 
 function TemplateEditor() {
-  const [templateSaves, setTemplateSaves] = useState<object[]>([]);
+  const [templateSaves, setTemplateSaves] = useState<templates[]>(
+    JSON.parse(localStorage.getItem("saves") || "[]")
+  );
+  const [editPopOver, setEditPopOver] = useState<boolean>(false);
   // const [error, setError] = useState<string>(null);
   const form = useForm({
     initialValues: {
@@ -33,8 +52,8 @@ function TemplateEditor() {
       color: (value) =>
         value === "red" || value === "blue" || value === "green",
       prize: (value) => value.length > 0,
-      upperName: (value) => value.length > 0,
-      lowerName: (value) => value.length > 0,
+      upperName: (value) => value.length < 11,
+      lowerName: (value) => value.length < 11,
       price: (value) => value.length > 0,
       encerrado: (value) => value.length > 0,
     },
@@ -42,20 +61,58 @@ function TemplateEditor() {
       templateName: "El nombre debe tener mas de dos caracteres",
       color: "Debe seleccionar un color",
       prize: "Debe ingresar el valor del premio",
-      upperName: "Escriba el primer nombre de la lotería",
-      lowerName: "Escriba el segundo nombre de la lotería",
+      upperName: "El primer nombre escrito debe ser más corto",
+      lowerName: "El primer nombre escrito debe ser más corto",
       price: "Debe ingresar el precio de la boleta",
       encerrado: "Debe ingresar el precio del encerrado",
     },
   });
 
-  function saveTemplates(data: object) {
+  function deleteTemplateById(id: string) {
+    const newArray = lodash.filter(templateSaves, (o) => o.id !== id);
+    setTemplateSaves(newArray);
+    localStorage.setItem("saves", JSON.stringify(newArray));
+    console.log(newArray);
+  }
+
+  function saveTemplates(data: templates) {
     const newSaves = templateSaves;
     newSaves.push(data);
     setTemplateSaves(newSaves);
+    localStorage.setItem("saves", JSON.stringify(templateSaves));
     console.log(newSaves);
     console.log(templateSaves);
   }
+
+  function editTemplateByValue(value: templates) {
+    form.setValues(value);
+  }
+
+  const templateRows = templateSaves.map((element, index) => (
+    <tr key={element.id}>
+      <td>{element.templateName}</td>
+      <td>
+        <Group position="right" spacing="xs">
+          <ActionIcon
+            onClick={() => {
+              editTemplateByValue(element);
+            }}
+          >
+            <PencilIcon />
+          </ActionIcon>
+          <ActionIcon
+            onClick={() => {
+              deleteTemplateById(element.id);
+              setEditPopOver(!editPopOver);
+            }}
+            color="red"
+          >
+            <TrashIcon />
+          </ActionIcon>
+        </Group>
+      </td>
+    </tr>
+  ));
 
   return (
     <div
@@ -70,13 +127,13 @@ function TemplateEditor() {
         <Grid.Col span={1}>
           <Image
             radius="md"
-            src={`http://localhost:4000/svg/generate/${form.values.color ? form.values.color : "blue"}/fecha/${
-              form.values.upperName ? form.values.upperName : " "
-            }/${form.values.lowerName ? form.values.lowerName : " "}/${
-              form.values.encerrado ? form.values.encerrado : " "
-            }/000/${form.values.price ? form.values.price : " "}/${
-              form.values.prize ? form.values.prize : " "
-            }/`}
+            src={`http://localhost:4000/svg/generate/${
+              form.values.color ? form.values.color : "blue"
+            }/fecha/${form.values.upperName ? form.values.upperName : " "}/${
+              form.values.lowerName ? form.values.lowerName : " "
+            }/${form.values.encerrado ? form.values.encerrado : " "}/000/${
+              form.values.price ? form.values.price : " "
+            }/${form.values.prize ? form.values.prize : " "}/`}
             alt="Random unsplash image"
           />
         </Grid.Col>
@@ -97,7 +154,7 @@ function TemplateEditor() {
             />
             <Select
               {...form.getInputProps("color")}
-              label="Color de la PLantilla"
+              label="Color de la Plantilla"
               required
               placeholder="Escoge un Color"
               itemComponent={forwardRef(({ label, value, ...others }, ref) => (
@@ -185,9 +242,44 @@ function TemplateEditor() {
             </Group>
             <Space h="md"></Space>
             <Group grow>
-              <Button color="gray">Plantillas</Button>
+              <Popover
+                onClose={() => setEditPopOver(!editPopOver)}
+                withCloseButton
+                opened={editPopOver}
+                target={
+                  <Button
+                    fullWidth
+                    color="gray"
+                    onClick={() => {
+                      console.log(
+                        JSON.parse(localStorage.getItem("saves") || "[]")
+                      );
+                      setEditPopOver(!editPopOver);
+                      console.log(templateSaves);
+                    }}
+                  >
+                    Plantillas
+                  </Button>
+                }
+              >
+                <Table highlightOnHover>
+                  <thead>
+                    <tr>
+                      <th>
+                        {templateRows.length > 0
+                          ? "Nombre de plantilla"
+                          : "No existen plantillas creadas"}
+                      </th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>{templateRows}</tbody>
+                </Table>
+              </Popover>
               <Button
                 type="submit"
+                onClick={()=>deleteTemplateById(form.values.id)}
                 onMouseEnter={() => {
                   form.values.id ? "" : form.setFieldValue("id", nanoid());
                 }}

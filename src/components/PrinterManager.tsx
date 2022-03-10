@@ -487,7 +487,7 @@ function PrinterManager() {
         </thead>
         <tbody>{rows}</tbody>
       </Table>
-      <Button onClick={() => console.log(day)}>Imprimir dates</Button>
+      <Button onClick={() => console.log(JSON.parse(localStorage.getItem("saves") || "[]"))}>Imprimir plantillas</Button>
     </div>
   );
 }
