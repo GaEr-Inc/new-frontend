@@ -72,7 +72,6 @@ function TemplateEditor() {
     const newArray = lodash.filter(templateSaves, (o) => o.id !== id);
     setTemplateSaves(newArray);
     localStorage.setItem("saves", JSON.stringify(newArray));
-    console.log(newArray);
   }
 
   function saveTemplates(data: templates) {
@@ -80,8 +79,6 @@ function TemplateEditor() {
     newSaves.push(data);
     setTemplateSaves(newSaves);
     localStorage.setItem("saves", JSON.stringify(templateSaves));
-    console.log(newSaves);
-    console.log(templateSaves);
   }
 
   function editTemplateByValue(value: templates) {
@@ -96,6 +93,7 @@ function TemplateEditor() {
           <ActionIcon
             onClick={() => {
               editTemplateByValue(element);
+              setEditPopOver(!editPopOver);
             }}
           >
             <PencilIcon />
@@ -142,7 +140,6 @@ function TemplateEditor() {
           <form
             onSubmit={form.onSubmit((values) => {
               saveTemplates(values);
-              console.log(values);
               form.reset();
             })}
           >
@@ -251,11 +248,7 @@ function TemplateEditor() {
                     fullWidth
                     color="gray"
                     onClick={() => {
-                      console.log(
-                        JSON.parse(localStorage.getItem("saves") || "[]")
-                      );
                       setEditPopOver(!editPopOver);
-                      console.log(templateSaves);
                     }}
                   >
                     Plantillas
