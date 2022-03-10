@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import {
   Badge,
   Button,
@@ -12,42 +12,50 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/hooks";
+import { nanoid } from "nanoid";
 
 function TemplateEditor() {
-  const [prizeValue, setPrizeValue] = useState(250000);
-  const [firstLotteryName, setFirstLotteryName] = useState("Chontico");
-  const [secondLotteryName, setSecondLotteryName] = useState("Dia");
-  const [priceValue, setPriceValue] = useState(500);
-  const [encerradoValue, setEncerradoValue] = useState(3000);
-  const [template, setTemplate] = useState<"red" | "green" | "blue">("blue");
-  const [defaultDate, setDefaultDate] = useState<string>("dia # de mes de año");
-  const [formType, setFormType] = useState<"register" | "login">("register");
-  const [loading, setLoading] = useState(false);
+  const [templateSaves, setTemplateSaves] = useState<object[]>([]);
   // const [error, setError] = useState<string>(null);
   const form = useForm({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      termsOfService: true,
+      id: "",
+      templateName: "",
+      color: "",
+      prize: "",
+      upperName: "",
+      lowerName: "",
+      price: "",
+      encerrado: "",
     },
-
     validationRules: {
-      firstName: (value) => formType === "login" || value.trim().length >= 2,
-      lastName: (value) => formType === "login" || value.trim().length >= 2,
-      email: (value) => /^\S+@\S+$/.test(value),
-      password: (value) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value),
+      templateName: (value) => value.length > 2,
+      color: (value) =>
+        value === "red" || value === "blue" || value === "green",
+      prize: (value) => value.length > 0,
+      upperName: (value) => value.length > 0,
+      lowerName: (value) => value.length > 0,
+      price: (value) => value.length > 0,
+      encerrado: (value) => value.length > 0,
     },
-
     errorMessages: {
-      email: "Invalid email",
-      password:
-        "Password should contain 1 number, 1 letter and at least 6 characters",
-      confirmPassword: "Passwords don't match. Try again",
+      templateName: "El nombre debe tener mas de dos caracteres",
+      color: "Debe seleccionar un color",
+      prize: "Debe ingresar el valor del premio",
+      upperName: "Escriba el primer nombre de la lotería",
+      lowerName: "Escriba el segundo nombre de la lotería",
+      price: "Debe ingresar el precio de la boleta",
+      encerrado: "Debe ingresar el precio del encerrado",
     },
   });
+
+  function saveTemplates(data: object) {
+    const newSaves = templateSaves;
+    newSaves.push(data);
+    setTemplateSaves(newSaves);
+    console.log(newSaves);
+    console.log(templateSaves);
+  }
 
   return (
     <div
@@ -62,36 +70,53 @@ function TemplateEditor() {
         <Grid.Col span={1}>
           <Image
             radius="md"
-            src={`http://localhost:4000/svg/generate/${template}/fecha/${firstLotteryName}/${secondLotteryName}/${encerradoValue}/000/${priceValue}/${prizeValue}/`}
+            src={`http://localhost:4000/svg/generate/${form.values.color ? form.values.color : "blue"}/fecha/${
+              form.values.upperName ? form.values.upperName : " "
+            }/${form.values.lowerName ? form.values.lowerName : " "}/${
+              form.values.encerrado ? form.values.encerrado : " "
+            }/000/${form.values.price ? form.values.price : " "}/${
+              form.values.prize ? form.values.prize : " "
+            }/`}
             alt="Random unsplash image"
           />
         </Grid.Col>
 
         <Grid.Col span={1}>
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
+          <form
+            onSubmit={form.onSubmit((values) => {
+              saveTemplates(values);
+              console.log(values);
+              form.reset();
+            })}
+          >
             <TextInput
               required
               label="Nombre Guardado"
               placeholder="Nombre de la plantilla"
-              {...form.getInputProps("email")}
+              {...form.getInputProps("templateName")}
             />
             <Select
+              {...form.getInputProps("color")}
               label="Color de la PLantilla"
               required
               placeholder="Escoge un Color"
-              itemComponent={forwardRef(
-                ({label, value, ...others }, ref) => (
-                  <div ref={ref} {...others}>
-                        <Badge
-                          style={{ marginRight: 3 }}
-                          color={value}
-                          variant="filled"
-                        >
-                          {label}
-                        </Badge>
-                  </div>
-                )
-              )}
+              itemComponent={forwardRef(({ label, value, ...others }, ref) => (
+                <div ref={ref} {...others}>
+                  <Badge
+                    style={{ marginRight: 3 }}
+                    color={value}
+                    variant="filled"
+                    // fullWidth
+                    // radius="xs"
+                  >
+                    {label}
+                  </Badge>
+                </div>
+              ))}
+              // onChange={(value: "red" | "green" | "blue") => {
+              //   value ? setTemplate(value) : setTemplate("blue");
+              //   form.setFieldValue("color", value);
+              // }}
               data={[
                 { value: "red", label: "Rojo" },
                 { value: "green", label: "Verde" },
@@ -109,43 +134,49 @@ function TemplateEditor() {
               //     .includes(value.toLowerCase().trim())
               // }
             />
-            <NumberInput
+            <TextInput
+              type="number"
+              {...form.getInputProps("prize")}
               required
               label="Valor del Premio"
-              hideControls
+              // hideControls
               // description="Mínimo 0, máximo 9999."
               placeholder="Ingrese el valor del premio"
               max={999999}
               min={0}
             />
             <TextInput
+              {...form.getInputProps("upperName")}
               data-autofocus
               required
               placeholder="Chontico"
               label="Nombre superior"
-              {...form.getInputProps("firstName")}
             />
             <TextInput
               data-autofocus
               required
               placeholder="Noche"
               label="Nombre Inferior"
-              {...form.getInputProps("firstName")}
+              {...form.getInputProps("lowerName")}
             />
             <Group grow>
-              <NumberInput
+              <TextInput
+                type="number"
+                {...form.getInputProps("price")}
                 required
                 label="Precio Boleta"
                 // description="Mínimo 0, máximo 999."
                 placeholder="Precio Boleta"
-                hideControls
+                // hideControls
                 max={999}
                 min={0}
               />
-              <NumberInput
+              <TextInput
+                type="number"
+                {...form.getInputProps("encerrado")}
                 required
                 label="Valor Encerrado"
-                hideControls
+                // hideControls
                 // description="Mínimo 0, máximo 9999."
                 placeholder="Valor Encerrado"
                 max={9999}
@@ -153,7 +184,17 @@ function TemplateEditor() {
               />
             </Group>
             <Space h="md"></Space>
-            <Button type="submit">Submit</Button>
+            <Group grow>
+              <Button color="gray">Plantillas</Button>
+              <Button
+                type="submit"
+                onMouseEnter={() => {
+                  form.values.id ? "" : form.setFieldValue("id", nanoid());
+                }}
+              >
+                Guardar
+              </Button>
+            </Group>
           </form>
         </Grid.Col>
       </Grid>
