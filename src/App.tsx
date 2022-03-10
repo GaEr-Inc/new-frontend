@@ -17,6 +17,9 @@ import {
   AlertFillIcon,
   CheckCircleFillIcon,
   DatabaseIcon,
+  FileCodeIcon,
+  FileMediaIcon,
+  FileSymlinkFileIcon,
   FileIcon,
   HomeIcon,
   MoonIcon,
@@ -32,6 +35,8 @@ import { useInterval, useLocalStorageValue } from "@mantine/hooks";
 import { CONNECTION_STATE, TOKEN } from "./utils/globalStates";
 import { getToken, getUsers, updateAll } from "./utils/requests";
 import reactIntegration, { useAgile } from "@agile-ts/react";
+import TemplateEditor from "./components/TemplateEditor";
+import { useAgile } from "@agile-ts/react";
 import * as _ from "lodash";
 import BackendConfigurator from "./components/BackendConfigurator";
 import { restartBackend, stopBackend } from "./utils/commands";
@@ -160,6 +165,30 @@ function App() {
                 </ActionIcon>
               )}
             </Navbar.Section>
+            <Link to="/" style={{ textDecoration: "none" }}>
+              <NavButton icon={<HomeIcon />} color={"blue"} label={"Inicio"} />
+            </Link>
+            <Link to="/users" style={{ textDecoration: "none" }}>
+              <NavButton
+                icon={<PeopleIcon />}
+                color="green"
+                label={"Administrar Usuarios"}
+              />
+            </Link>
+            <Link to="/templateEditor" style={{ textDecoration: "none" }}>
+              <NavButton
+                icon={<FileMediaIcon />}
+                color="grape"
+                label={"Plantillas"}
+              />
+            </Link>
+            <Link to="/printer" style={{ textDecoration: "none" }}>
+              <NavButton
+                icon={<FileSymlinkFileIcon />}
+                color="red"
+                label={"Imprimir"}
+              />
+            </Link>
           </Navbar>
         }
         // Header
@@ -184,7 +213,7 @@ function App() {
               </MediaQuery>
               <ActionIcon
                 style={{
-                  marginInline: 5,
+                  marginInline: 10,
                 }}
                 onClick={() => (dark ? setDark(false) : setDark(true))}
                 title="Toggle color scheme"
@@ -202,6 +231,7 @@ function App() {
           <Route path="/users" element={<UserManager />} />
           <Route path="/printer" element={<PrinterManager />} />
           <Route path="/files" element={<FileDownloader/>} />
+          <Route path="/templateEditor" element={<TemplateEditor />} />
         </Routes>
       </AppShell>
     </MantineProvider>
