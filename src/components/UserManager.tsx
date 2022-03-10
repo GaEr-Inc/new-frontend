@@ -214,11 +214,13 @@ function UserManager() {
                   </Badge>
                 </>
               </td>
-              <td>
+              <td style={{display: "flex"}}>
                 {opened && userId === user.id ? (
                   <Loader style={{ marginInline: 5 }} size="sm" />
                 ) : (
-                  <ThemeIcon
+                  <ActionIcon
+                    variant="filled"
+                    color="blue"
                     style={{ marginInline: 5 }}
                     onClick={() => {
                       setOpened(true);
@@ -234,15 +236,18 @@ function UserManager() {
                     radius={10}
                   >
                     <PencilIcon />
-                  </ThemeIcon>
+                  </ActionIcon>
                 )}
-                <ThemeIcon
+                <ActionIcon
+
+                  color="blue"
+                  variant="filled"
                   style={{ marginInline: 5 }}
                   onClick={() => deleteUserById(user.id)}
                   radius={10}
                 >
                   <TrashIcon />
-                </ThemeIcon>
+                </ActionIcon>
               </td>
             </tr>
           ))}
@@ -276,6 +281,7 @@ function UserManager() {
                 updateUser(editedUser);
                 userId === "nanoid" ? addUser(editedUser) : updateUserToDB(editedUser) 
                 console.log(values);
+                setOpened(false)
                 form.reset();
               }
             }
@@ -355,8 +361,9 @@ function UserManager() {
                 red: { asignedNumbers: [], randomNumbers: [] },
               },
             };
-            form.reset()
             setCurrentUser(voidUser);
+            form.reset()
+            editUser(voidUser)
             setUserId("nanoid");
             setOpened(true);
           }}

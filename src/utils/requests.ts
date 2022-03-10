@@ -1,11 +1,19 @@
 import axios from "axios"
-import { NUMBERS, NUMBERS_BLUE, NUMBERS_GREEN, NUMBERS_RED, USERS_STATE } from "./globalStates"
+import { CONNECTION_STATE, FILES, NUMBERS, NUMBERS_BLUE, NUMBERS_GREEN, NUMBERS_RED, USERS_STATE } from "./globalStates"
 import { GlobalNumber, User } from "./interfaces"
 
 const server = "http://localhost:4000"
 
 export async function getUsers(): Promise<User[]> {
   return (await axios.get(`${server}/db/users`)).data
+}
+
+export async function getFiles() {
+  return (await axios.get(`${server}/files`)).data
+}
+
+export function deleteFile(file:string) {
+  axios.get(`${server}/file/delete/${file}`)
 }
 
 export async function getNumbers(): Promise<[GlobalNumber[], GlobalNumber[], GlobalNumber[]]> {
@@ -54,6 +62,15 @@ export function updateUserToDB(user: User) {
   )
 }
 
+export function checkBackend() {
+  axios.get(`${server}/status`, {timeout: 500}).then( (res) => {
+    CONNECTION_STATE.set(true)
+  }
+  ).catch(reason => {
+    CONNECTION_STATE.set(false);
+  })
+}
+
 export function addUser(user: User) {
   axios.post(`${server}/db/users/create`,  
     {
@@ -84,10 +101,22 @@ export function addUser(user: User) {
   )
 }
 
+export function resetAll() {
+  axios.delete(`${server}/db/all`)
+}
+
 export async function updateAll() {
-  USERS_STATE.set(await getUsers());
-  NUMBERS.set(await getNumbers());
-  NUMBERS_RED.set(await getNumbersByColor("red"))
-  NUMBERS_GREEN.set(await getNumbersByColor("green"))
-  NUMBERS_BLUE.set(await getNumbersByColor("blue"))
+  checkBackend()
+  if (CONNECTION_STATE._value === true) {
+    USERS_STATE.set(await getUsers());
+    FILES.set(await getFiles())
+    NUMBERS.set(await getNumbers());
+    if (NUMBERS_RED.value.length === 0 && NUMBERS_GREEN._value.length === 0 && NUMBERS_BLUE.value.length === 0 && localStorage.getItem('dbstarted') === null ) {
+      axios.delete(`${server}/db/all`)
+      localStorage.setItem('dbstarted', 'true')
+    }
+    NUMBERS_RED.set(await getNumbersByColor("red"))
+    NUMBERS_GREEN.set(await getNumbersByColor("green"))
+    NUMBERS_BLUE.set(await getNumbersByColor("blue"))
+  }
 }

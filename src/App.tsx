@@ -14,7 +14,10 @@ import {
   Button,
 } from "@mantine/core";
 import {
+  AlertFillIcon,
+  CheckCircleFillIcon,
   DatabaseIcon,
+  FileIcon,
   HomeIcon,
   MoonIcon,
   PeopleIcon,
@@ -25,11 +28,15 @@ import UserManager from "./components/UserManager";
 import NavButton from "./NavButton";
 import PrinterManager from "./components/PrinterManager";
 import Start from "./components/Start";
-import { useInterval } from "@mantine/hooks";
-import { TOKEN } from "./utils/globalStates";
+import { useInterval, useLocalStorageValue } from "@mantine/hooks";
+import { CONNECTION_STATE, TOKEN } from "./utils/globalStates";
 import { getToken, getUsers, updateAll } from "./utils/requests";
-import { useAgile } from "@agile-ts/react";
+import reactIntegration, { useAgile } from "@agile-ts/react";
 import * as _ from "lodash";
+import BackendConfigurator from "./components/BackendConfigurator";
+import { restartBackend, stopBackend } from "./utils/commands";
+import FileDownloader from "./components/FileDownloader";
+import { shared } from "@agile-ts/core";
 
 export const useStyles = createStyles((theme) => ({
   button: {
@@ -52,8 +59,15 @@ export const useStyles = createStyles((theme) => ({
 }));
 
 function App() {
+  shared.integrate(reactIntegration)
   const updateUsersInterval = useInterval(async () => {
-    if (!_.isEqual(await getToken(), TOKEN._value)) {
+    updateAll();
+    if (
+      !_.isEqual(
+        await getToken(),
+        TOKEN._value && CONNECTION_STATE.value === true
+      )
+    ) {
       updateAll();
       console.log("Globals Updated");
       TOKEN.set(await getToken());
@@ -73,6 +87,7 @@ function App() {
   }, []);
 
   const [dark, setDark] = useState<boolean>(false);
+  const connectionStatus = useAgile(CONNECTION_STATE);
 
   return (
     <MantineProvider
@@ -82,6 +97,7 @@ function App() {
       <AppShell
         navbarOffsetBreakpoint="sm"
         fixed
+        style={{ minHeight: "100%", minWidth: "100%" }}
         className={classes.app}
         // NavBar
         navbar={
@@ -91,23 +107,59 @@ function App() {
             hidden={!opened}
             width={{ sm: 400, lg: 400 }}
           >
-            <Link to="/" style={{ textDecoration: "none" }}>
-              <NavButton icon={<HomeIcon />} color={"blue"} label={"Inicio"} />
-            </Link>
-            <Link to="/users" style={{ textDecoration: "none" }}>
-              <NavButton
-                icon={<PeopleIcon />}
-                color={"green"}
-                label={"Administrar Usuarios"}
-              />
-            </Link>
-            <Link to="/printer" style={{ textDecoration: "none" }}>
-              <NavButton
-                icon={<PeopleIcon />}
-                color={"red"}
-                label={"Imprimir"}
-              />
-            </Link>
+            <Navbar.Section grow>
+              <Link to="/" style={{ textDecoration: "none" }}>
+                <NavButton
+                  icon={<HomeIcon />}
+                  color={"blue"}
+                  label={"Inicio"}
+                />
+              </Link>
+              <Link to="/users" style={{ textDecoration: "none" }}>
+                <NavButton
+                  icon={<PeopleIcon />}
+                  color={"green"}
+                  label={"Administrar Usuarios"}
+                />
+              </Link>
+              <Link to="/printer" style={{ textDecoration: "none" }}>
+                <NavButton
+                  icon={<PeopleIcon />}
+                  color={"red"}
+                  label={"Imprimir"}
+                />
+              </Link>
+              <Link to="/files" style={{ textDecoration: "none" }}>
+                <NavButton
+                  icon={<FileIcon />}
+                  color={"red"}
+                  label={"Archivos"}
+                />
+              </Link>
+            </Navbar.Section>
+            <Navbar.Section>
+              {!connectionStatus ? (
+                <ActionIcon
+                  style={{ marginInline: 5 }}
+                  size="md"
+                  variant="outline"
+                  color="red"
+                  onClick={() => restartBackend()}
+                >
+                  <AlertFillIcon />
+                </ActionIcon>
+              ) : (
+                <ActionIcon
+                  style={{ marginInline: 5 }}
+                  size="md"
+                  variant="outline"
+                  color="green"
+                  onClick={() => stopBackend()}
+                >
+                  <CheckCircleFillIcon />
+                </ActionIcon>
+              )}
+            </Navbar.Section>
           </Navbar>
         }
         // Header
@@ -149,10 +201,10 @@ function App() {
           <Route path="/" element={<Start />} />
           <Route path="/users" element={<UserManager />} />
           <Route path="/printer" element={<PrinterManager />} />
+          <Route path="/files" element={<FileDownloader/>} />
         </Routes>
       </AppShell>
     </MantineProvider>
   );
 }
-
 export default App;

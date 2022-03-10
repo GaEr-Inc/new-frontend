@@ -10,6 +10,7 @@
     "beforeBuildCommand": "yarn build"
   },
   "tauri": {
+    
     "bundle": {
       "active": true,
       "targets": "all",
@@ -21,7 +22,8 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "resources": [],
+      "resources": [
+      ],
       "externalBin": [],
       "copyright": "",
       "category": "DeveloperTool",
@@ -50,7 +52,23 @@
       "active": false
     },
     "allowlist": {
-      "all": true
+      "all": true,
+      "path": {
+        "all": true
+      },
+      "shell": {
+        "all": true,
+        "execute": true,
+        "open": true,
+        "scope": [
+          {
+            "name": "wsl",
+            "cmd": "wsl",
+            "args": true
+          }
+        ],
+        "sidecar": true
+      }
     },
     "windows": [
       {
@@ -62,7 +80,8 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "",
+      "freezePrototype": false
     }
   }
 }
