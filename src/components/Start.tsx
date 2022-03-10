@@ -10,12 +10,9 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { useLocalStorageValue } from "@mantine/hooks";
 import { AlertIcon } from "@primer/octicons-react";
-import { Command } from "@tauri-apps/api/shell";
 import _ from "lodash";
 import { nanoid } from "nanoid";
-import React from "react";
 import { FILES } from "../utils/globalStates";
 import { deleteFile } from "../utils/requests";
 

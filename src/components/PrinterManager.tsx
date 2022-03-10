@@ -1,4 +1,5 @@
 import {
+  Affix,
   Avatar,
   Badge,
   Button,
@@ -11,14 +12,17 @@ import {
   Table,
   Text,
   ThemeIcon,
+  Transition,
   useMantineTheme,
 } from "@mantine/core";
 import { Calendar, DatePicker, isSameDate } from "@mantine/dates";
-import { TrashIcon } from "@primer/octicons-react";
+import { ArchiveIcon, ArrowUpIcon, TrashIcon } from "@primer/octicons-react";
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import React, { forwardRef, useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import _ from "lodash";
+import { useNotifications } from "@mantine/notifications";
 
 dayjs.extend(updateLocale);
 
@@ -71,6 +75,7 @@ function PrinterManager() {
   const [checked, setChecked] = useState<boolean>(false);
   const [oneDayDate, setOneDayDate] = useState<Date>();
   const theme = useMantineTheme();
+  const notifications = useNotifications();
   const inputFormat = values
     .map((date) => dayjs(date).format("dddd DD MMMM YYYY"))
     .join(", ");
@@ -85,7 +90,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "",
     },
     {
       date: "",
@@ -95,7 +100,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
     {
       date: "",
@@ -105,7 +110,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "",
     },
     {
       date: "",
@@ -115,7 +120,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
     {
       date: "",
@@ -125,7 +130,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "",
     },
     {
       date: "",
@@ -135,7 +140,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
     {
       date: "",
@@ -145,7 +150,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "",
     },
     {
       date: "",
@@ -155,7 +160,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
     {
       date: "",
@@ -165,7 +170,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "",
     },
     {
       date: "",
@@ -175,7 +180,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
     {
       date: "",
@@ -185,7 +190,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "",
     },
     {
       date: "",
@@ -195,7 +200,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
     {
       date: "",
@@ -205,7 +210,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "",
     },
     {
       date: "",
@@ -215,7 +220,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
     {
       date: "",
@@ -225,7 +230,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "green",
+      template: "",
     },
     {
       date: "",
@@ -235,7 +240,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
     {
       date: "",
@@ -245,7 +250,7 @@ function PrinterManager() {
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "red",
+      template: "",
     },
     {
       date: "",
@@ -255,7 +260,7 @@ function PrinterManager() {
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "blue",
+      template: "",
     },
   ]);
 
@@ -382,7 +387,9 @@ function PrinterManager() {
               maxDropdownHeight={310}
               nothingFound="Nobody here"
               filter={(value, item) =>
-                item.label?.toLowerCase().includes(value.toLowerCase().trim()) ||
+                item.label
+                  ?.toLowerCase()
+                  .includes(value.toLowerCase().trim()) ||
                 item.description
                   .toLowerCase()
                   .includes(value.toLowerCase().trim())
@@ -446,7 +453,9 @@ function PrinterManager() {
               maxDropdownHeight={310}
               nothingFound="Nobody here"
               filter={(value, item) =>
-                item.label?.toLowerCase().includes(value.toLowerCase().trim()) ||
+                item.label
+                  ?.toLowerCase()
+                  .includes(value.toLowerCase().trim()) ||
                 item.description
                   .toLowerCase()
                   .includes(value.toLowerCase().trim())
@@ -462,8 +471,37 @@ function PrinterManager() {
         </tr>
       ));
 
+  function handlePrint() {
+    if (checked) {
+      const validDates = _.filter(days, (day) => day.date !== "");
+      const validTemplates = _.filter(days, (day) => day.template !== "");
+      if (validDates.length !== 18) {
+        notifications.showNotification({
+          title: "Error",
+          color: "red",
+          message: "Debes seleccionar 18 fechas!",
+        });
+        return;
+      }
+      if (validTemplates.length !== 18) {
+        notifications.showNotification({
+          title: "Error",
+          color: "red",
+          message: "Debes seleccionar 18 plantillas!",
+        });
+        console.log(days);
+        return;
+      }
+    }
+  }
+
   return (
     <div>
+      <Affix position={{ bottom: 20, right: 20 }}>
+        <Button leftIcon={<ArchiveIcon />} onClick={() => handlePrint()}>
+          Imprimir
+        </Button>
+      </Affix>
       <Switch
         label="<-- Cantidad de días a Imprimir"
         onLabel="⠀18"
@@ -487,7 +525,13 @@ function PrinterManager() {
         </thead>
         <tbody>{rows}</tbody>
       </Table>
-      <Button onClick={() => console.log(JSON.parse(localStorage.getItem("saves") || "[]"))}>Imprimir plantillas</Button>
+      <Button
+        onClick={() =>
+          console.log(JSON.parse(localStorage.getItem("saves") || "[]"))
+        }
+      >
+        Imprimir plantillas
+      </Button>
     </div>
   );
 }

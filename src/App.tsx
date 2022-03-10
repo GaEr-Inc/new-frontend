@@ -36,12 +36,11 @@ import { CONNECTION_STATE, TOKEN } from "./utils/globalStates";
 import { getToken, getUsers, updateAll } from "./utils/requests";
 import reactIntegration, { useAgile } from "@agile-ts/react";
 import TemplateEditor from "./components/TemplateEditor";
-import { useAgile } from "@agile-ts/react";
 import * as _ from "lodash";
 import BackendConfigurator from "./components/BackendConfigurator";
 import { restartBackend, stopBackend } from "./utils/commands";
-import FileDownloader from "./components/FileDownloader";
 import { shared } from "@agile-ts/core";
+import { NotificationsProvider } from "@mantine/notifications";
 
 export const useStyles = createStyles((theme) => ({
   button: {
@@ -64,7 +63,7 @@ export const useStyles = createStyles((theme) => ({
 }));
 
 function App() {
-  shared.integrate(reactIntegration)
+  shared.integrate(reactIntegration);
   const updateUsersInterval = useInterval(async () => {
     updateAll();
     if (
@@ -99,141 +98,125 @@ function App() {
       theme={dark ? { colorScheme: "dark" } : { colorScheme: "light" }}
       withGlobalStyles
     >
-      <AppShell
-        navbarOffsetBreakpoint="sm"
-        fixed
-        style={{ minHeight: "100%", minWidth: "100%" }}
-        className={classes.app}
-        // NavBar
-        navbar={
-          <Navbar
-            padding="md"
-            hiddenBreakpoint="sm"
-            hidden={!opened}
-            width={{ sm: 400, lg: 400 }}
-          >
-            <Navbar.Section grow>
-              <Link to="/" style={{ textDecoration: "none" }}>
-                <NavButton
-                  icon={<HomeIcon />}
-                  color={"blue"}
-                  label={"Inicio"}
-                />
-              </Link>
-              <Link to="/users" style={{ textDecoration: "none" }}>
-                <NavButton
-                  icon={<PeopleIcon />}
-                  color={"green"}
-                  label={"Administrar Usuarios"}
-                />
-              </Link>
-              <Link to="/printer" style={{ textDecoration: "none" }}>
-                <NavButton
-                  icon={<PeopleIcon />}
-                  color={"red"}
-                  label={"Imprimir"}
-                />
-              </Link>
-              <Link to="/files" style={{ textDecoration: "none" }}>
-                <NavButton
-                  icon={<FileIcon />}
-                  color={"red"}
-                  label={"Archivos"}
-                />
-              </Link>
-            </Navbar.Section>
-            <Navbar.Section>
-              {!connectionStatus ? (
-                <ActionIcon
-                  style={{ marginInline: 5 }}
-                  size="md"
-                  variant="outline"
-                  color="red"
-                  onClick={() => restartBackend()}
-                >
-                  <AlertFillIcon />
-                </ActionIcon>
-              ) : (
-                <ActionIcon
-                  style={{ marginInline: 5 }}
-                  size="md"
-                  variant="outline"
-                  color="green"
-                  onClick={() => stopBackend()}
-                >
-                  <CheckCircleFillIcon />
-                </ActionIcon>
-              )}
-            </Navbar.Section>
-            <Link to="/" style={{ textDecoration: "none" }}>
-              <NavButton icon={<HomeIcon />} color={"blue"} label={"Inicio"} />
-            </Link>
-            <Link to="/users" style={{ textDecoration: "none" }}>
-              <NavButton
-                icon={<PeopleIcon />}
-                color="green"
-                label={"Administrar Usuarios"}
-              />
-            </Link>
-            <Link to="/templateEditor" style={{ textDecoration: "none" }}>
-              <NavButton
-                icon={<FileMediaIcon />}
-                color="grape"
-                label={"Plantillas"}
-              />
-            </Link>
-            <Link to="/printer" style={{ textDecoration: "none" }}>
-              <NavButton
-                icon={<FileSymlinkFileIcon />}
-                color="red"
-                label={"Imprimir"}
-              />
-            </Link>
-          </Navbar>
-        }
-        // Header
-        header={
-          <Header height={70} padding="md">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                height: "100%",
-                width: "100%",
-              }}
+      <NotificationsProvider position="top-right">
+        <AppShell
+          navbarOffsetBreakpoint="sm"
+          fixed
+          style={{ minHeight: "100%", minWidth: "100%" }}
+          className={classes.app}
+          // NavBar
+          navbar={
+            <Navbar
+              padding="md"
+              hiddenBreakpoint="sm"
+              hidden={!opened}
+              width={{ sm: 400, lg: 400 }}
             >
-              <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-                <Burger
-                  opened={opened}
-                  onClick={() => setOpened((o) => !o)}
-                  size="sm"
-                  color={theme.colors.gray[6]}
-                  mr="xl"
-                />
-              </MediaQuery>
-              <ActionIcon
+              <Navbar.Section grow>
+                <Link to="/" style={{ textDecoration: "none" }}>
+                  <NavButton
+                    icon={<HomeIcon />}
+                    color={"blue"}
+                    label={"Inicio"}
+                  />
+                </Link>
+                <Link to="/users" style={{ textDecoration: "none" }}>
+                  <NavButton
+                    icon={<PeopleIcon />}
+                    color={"green"}
+                    label={"Administrar Usuarios"}
+                  />
+                </Link>
+                <Link to="/printer" style={{ textDecoration: "none" }}>
+                  <NavButton
+                    icon={<FileSymlinkFileIcon />}
+                    color="red"
+                    label={"Imprimir"}
+                  />
+                </Link>
+                <Link to="/printerrework" style={{ textDecoration: "none" }}>
+                  <NavButton
+                    icon={<FileSymlinkFileIcon />}
+                    color="red"
+                    label={"Imprimir Remix"}
+                  />
+                </Link>
+                <Link to="/templateEditor" style={{ textDecoration: "none" }}>
+                  <NavButton
+                    icon={<FileMediaIcon />}
+                    color="grape"
+                    label={"Plantillas"}
+                  />
+                </Link>
+              </Navbar.Section>
+              <Navbar.Section>
+                {!connectionStatus ? (
+                  <ActionIcon
+                    style={{ marginInline: 5 }}
+                    size="md"
+                    variant="outline"
+                    color="red"
+                    onClick={() => restartBackend()}
+                  >
+                    <AlertFillIcon />
+                  </ActionIcon>
+                ) : (
+                  <ActionIcon
+                    style={{ marginInline: 5 }}
+                    size="md"
+                    variant="outline"
+                    color="green"
+                    onClick={() => stopBackend()}
+                  >
+                    <CheckCircleFillIcon />
+                  </ActionIcon>
+                )}
+              </Navbar.Section>
+            </Navbar>
+          }
+          // Header
+          header={
+            <Header height={70} padding="md">
+              <div
                 style={{
-                  marginInline: 10,
+                  display: "flex",
+                  alignItems: "center",
+                  height: "100%",
+                  width: "100%",
                 }}
-                onClick={() => (dark ? setDark(false) : setDark(true))}
-                title="Toggle color scheme"
               >
-                {dark ? <SunIcon /> : <MoonIcon />}
-              </ActionIcon>
+                <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+                  <Burger
+                    opened={opened}
+                    onClick={() => setOpened((o) => !o)}
+                    size="sm"
+                    color={theme.colors.gray[6]}
+                    mr="xl"
+                  />
+                </MediaQuery>
+                <ActionIcon
+                  style={{
+                    marginInline: 10,
+                  }}
+                  onClick={() => (dark ? setDark(false) : setDark(true))}
+                  title="Toggle color scheme"
+                >
+                  {dark ? <SunIcon /> : <MoonIcon />}
+                </ActionIcon>
 
-              <Text>Raffle Manager</Text>
-            </div>
-          </Header>
-        }
-      >
-        <Routes>
-          <Route path="/" element={<Start />} />
-          <Route path="/users" element={<UserManager />} />
-          <Route path="/printer" element={<PrinterManager />} />
-          <Route path="/files" element={<FileDownloader/>} />
-          <Route path="/templateEditor" element={<TemplateEditor />} />
-        </Routes>
-      </AppShell>
+                <Text>Raffle Manager</Text>
+              </div>
+            </Header>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<Start />} />
+            <Route path="/users" element={<UserManager />} />
+            <Route path="/printer" element={<PrinterManager />} />
+            <Route path="/templateEditor" element={<TemplateEditor />} />
+          </Routes>
+        </AppShell>
+      </NotificationsProvider>
     </MantineProvider>
   );
 }
