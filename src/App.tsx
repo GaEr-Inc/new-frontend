@@ -73,7 +73,7 @@ function App() {
   const { classes } = useStyles();
 
   useEffect(() => {
-    if (localStorage.getItem('dbset') === null) {
+    if (localStorage.getItem('dbreset') === null) {
       resetDB();
       localStorage.setItem('dbset', "done");
       console.log("DB Reseted");
