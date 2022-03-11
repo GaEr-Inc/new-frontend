@@ -9,18 +9,14 @@ import {
   Burger,
   createStyles,
   ActionIcon,
-  useMantineColorScheme,
   MantineProvider,
   Button,
 } from "@mantine/core";
 import {
   AlertFillIcon,
   CheckCircleFillIcon,
-  DatabaseIcon,
-  FileCodeIcon,
   FileMediaIcon,
   FileSymlinkFileIcon,
-  FileIcon,
   HomeIcon,
   MoonIcon,
   PeopleIcon,
@@ -31,13 +27,12 @@ import UserManager from "./components/UserManager";
 import NavButton from "./NavButton";
 import PrinterManager from "./components/PrinterManager";
 import Start from "./components/Start";
-import { useInterval, useLocalStorageValue } from "@mantine/hooks";
+import { useInterval } from "@mantine/hooks";
 import { CONNECTION_STATE, TOKEN } from "./utils/globalStates";
 import { getToken, getUsers, updateAll } from "./utils/requests";
 import reactIntegration, { useAgile } from "@agile-ts/react";
 import TemplateEditor from "./components/TemplateEditor";
 import * as _ from "lodash";
-import BackendConfigurator from "./components/BackendConfigurator";
 import { restartBackend, stopBackend } from "./utils/commands";
 import { shared } from "@agile-ts/core";
 import { NotificationsProvider } from "@mantine/notifications";
@@ -68,12 +63,7 @@ function App() {
   shared.integrate(reactIntegration);
   const updateUsersInterval = useInterval(async () => {
     updateAll();
-    if (
-      !_.isEqual(
-        await getToken(),
-        TOKEN._value && CONNECTION_STATE.value === true
-      )
-    ) {
+    if (!_.isEqual(await getToken(), TOKEN._value)) {
       updateAll();
       console.log("Globals Updated");
       TOKEN.set(await getToken());
