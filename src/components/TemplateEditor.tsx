@@ -20,8 +20,8 @@ import { PencilIcon, TrashIcon } from "@primer/octicons-react";
 import * as lodash from "lodash";
 
 export interface template {
-  id: string;
-  name: string;
+  value: string;
+  label: string;
   color: string;
   prize: string;
   lottery1: string;
@@ -38,8 +38,8 @@ function TemplateEditor() {
   // const [error, setError] = useState<string>(null);
   const form = useForm({
     initialValues: {
-      id: "",
-      name: "",
+      value: "",
+      label: "",
       color: "",
       prize: "",
       lottery1: "",
@@ -48,7 +48,7 @@ function TemplateEditor() {
       encerrado: "",
     },
     validationRules: {
-      name: (value) => value.length > 2,
+      label: (value) => value.length > 2,
       color: (value) =>
         value === "red" || value === "blue" || value === "green",
       prize: (value) => value.length > 0,
@@ -58,7 +58,7 @@ function TemplateEditor() {
       encerrado: (value) => value.length > 0,
     },
     errorMessages: {
-      name: "El nombre debe tener mas de dos caracteres",
+      label: "El nombre debe tener mas de dos caracteres",
       color: "Debe seleccionar un color",
       prize: "Debe ingresar el valor del premio",
       lottery1: "El primer nombre escrito debe ser más corto",
@@ -69,7 +69,7 @@ function TemplateEditor() {
   });
 
   function deleteTemplateById(id: string) {
-    const newArray = lodash.filter(templateSaves, (o) => o.id !== id);
+    const newArray = lodash.filter(templateSaves, (o) => o.value !== id);
     setTemplateSaves(newArray);
     localStorage.setItem("saves", JSON.stringify(newArray));
   }
@@ -86,8 +86,8 @@ function TemplateEditor() {
   }
 
   const templateRows = templateSaves.map((element, index) => (
-    <tr key={element.id}>
-      <td>{element.name}</td>
+    <tr key={element.value}>
+      <td>{element.label}</td>
       <td>
         <Group position="right" spacing="xs">
           <ActionIcon
@@ -100,7 +100,7 @@ function TemplateEditor() {
           </ActionIcon>
           <ActionIcon
             onClick={() => {
-              deleteTemplateById(element.id);
+              deleteTemplateById(element.value);
               setEditPopOver(!editPopOver);
             }}
             color="red"
@@ -147,7 +147,7 @@ function TemplateEditor() {
               required
               label="Nombre Guardado"
               placeholder="Nombre de la plantilla"
-              {...form.getInputProps("name")}
+              {...form.getInputProps("label")}
             />
             <Select
               {...form.getInputProps("color")}
@@ -272,9 +272,9 @@ function TemplateEditor() {
               </Popover>
               <Button
                 type="submit"
-                onClick={()=>deleteTemplateById(form.values.id)}
+                onClick={()=>deleteTemplateById(form.values.value)}
                 onMouseEnter={() => {
-                  form.values.id ? "" : form.setFieldValue("id", nanoid());
+                  form.values.value ? "" : form.setFieldValue("value", nanoid());
                 }}
               >
                 Guardar

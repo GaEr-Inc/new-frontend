@@ -23,6 +23,10 @@ import React, { forwardRef, useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import _ from "lodash";
 import { useNotifications } from "@mantine/notifications";
+import { template } from "./TemplateEditor";
+import { useForm } from "@mantine/hooks";
+import lodash from "lodash";
+import { send1ToPrint } from "../utils/requests";
 
 dayjs.extend(updateLocale);
 
@@ -60,7 +64,7 @@ export interface day {
   number: number;
   cost: string;
   prize: string;
-  template: 'red' | 'green' | 'blue' | '';
+  template: string;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -68,12 +72,37 @@ const useStyles = createStyles((theme) => ({
     color: `${theme.colors.blue[6]} !important`,
   },
 }));
+interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
+  image: string;
+  label: string;
+  description: string;
+}
+
+const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
+  ({ image, label, description, ...others }: ItemProps, ref) => (
+    <div ref={ref} {...others}>
+      <Group noWrap>
+        <Avatar src={image} />
+
+        <div>
+          <Text size="sm">{label}</Text>
+          <Text size="xs" color="dimmed">
+            {description}
+          </Text>
+        </div>
+      </Group>
+    </div>
+  )
+);
 
 function PrinterManager() {
   const { classes, cx } = useStyles();
   const [values, setValues] = useState<Date[]>([]);
   const [checked, setChecked] = useState<boolean>(false);
   const [oneDayDate, setOneDayDate] = useState<Date>();
+  const [templateSaves, setTemplateSaves] = useState<template[]>(
+    JSON.parse(localStorage.getItem("saves") || "[]")
+  );
   const theme = useMantineTheme();
   const notifications = useNotifications();
   const inputFormat = values
@@ -267,6 +296,38 @@ function PrinterManager() {
     console.log(days);
   }, [days]);
 
+  const oneForm = useForm({
+    initialValues: {
+      date: "",
+      lottery1: "",
+      lottery2: "",
+      encerrado: "",
+      number: 5,
+      cost: "",
+      prize: "",
+      template: "",
+    },
+    validationRules: {
+      date: (value) => value.length > 0 && !(value==="Invalid Date"),
+      lottery1: (value) => value.length > 0,
+      lottery2: (value) => value.length > 0,
+      encerrado: (value) => value.length > 0,
+      cost: (value) => value.length > 0,
+      prize: (value) => value.length > 0,
+      template: (value) => value.length > 0,
+    },
+    errorMessages: {
+      date: "Debe seleccionar una fecha",
+      lottery1: "Debe seleccionar una plantilla",
+      lottery2: "Debe seleccionar una plantilla",
+      encerrado: "Debe seleccionar una plantilla",
+      number: 5,
+      cost: "Debe seleccionar una plantilla",
+      prize: "Debe seleccionar una plantilla",
+      template: "Debe seleccionar una plantilla",
+    },
+  });
+
   function template(color: string) {
     switch (color) {
       case "red":
@@ -303,41 +364,6 @@ function PrinterManager() {
     },
   ]);
 
-  const selectData = [
-    {
-      image: "https://img.icons8.com/clouds/256/000000/futurama-bender.png",
-      label: "Bender Bending Rodríguez",
-      value: "Bender Bending Rodríguez",
-      description: "Fascinated with cooking",
-    },
-
-    {
-      image: "https://img.icons8.com/clouds/256/000000/futurama-mom.png",
-      label: "Carol Miller",
-      value: "Carol Miller",
-      description: "One of the richest people on Earth",
-    },
-    {
-      image: "https://img.icons8.com/clouds/256/000000/homer-simpson.png",
-      label: "Homer Simpson",
-      value: "Homer Simpson",
-      description: "Overweight, lazy, and often ignorant",
-    },
-    {
-      image:
-        "https://img.icons8.com/clouds/256/000000/spongebob-squarepants.png",
-      label: "Spongebob Squarepants",
-      value: "Spongebob Squarepants",
-      description: "Not just a sponge",
-    },
-    {
-      image: "https://img.icons8.com/office/160/000000/jake--v2.png",
-      label: "Jake",
-      value: "Jake",
-      description: "Not just a dog",
-    },
-  ];
-
   const rows = checked
     ? days.map((day, index) => (
         <tr key={nanoid()}>
@@ -364,35 +390,13 @@ function PrinterManager() {
           </td>
           <td>
             <Select
-              placeholder="Seleccionar Plantilla"
-              itemComponent={forwardRef(
-                ({ image, label, description, ...others }, ref) => (
-                  <div ref={ref} {...others}>
-                    <Group noWrap>
-                      <Avatar src={image} />
-
-                      <div>
-                        <Text>{label}</Text>
-                        <Text size="xs" color="dimmed">
-                          {description}
-                        </Text>
-                      </div>
-                    </Group>
-                  </div>
-                )
-              )}
-              data={selectData}
+              clearable
+              placeholder="Pick one"
+              itemComponent={SelectItem}
+              data={templateSaves}
               searchable
-              maxDropdownHeight={310}
+              maxDropdownHeight={400}
               nothingFound="Nobody here"
-              filter={(value, item) =>
-                item.label
-                  ?.toLowerCase()
-                  .includes(value.toLowerCase().trim()) ||
-                item.description
-                  .toLowerCase()
-                  .includes(value.toLowerCase().trim())
-              }
             />
           </td>
           <td>{day.lottery1}</td>
@@ -407,19 +411,20 @@ function PrinterManager() {
         <tr key={nanoid()}>
           <td>
             <DatePicker
+              {...oneForm.getInputProps("date")}
               transition={"scale-y"}
               minDate={dayjs(new Date()).toDate()}
               placeholder="Fecha de la boleta"
               onChange={(date: Date) => {
                 const oldDay = day;
                 oldDay.date = dayjs(date)
-                  .format("dddd DD MMMM YYYY")
+                  .format("DD MMMM YYYY")
                   .toString();
                 setDay([oldDay]);
                 setOneDayDate(date);
-                console.log(day);
+                oneForm.setFieldValue("date", oldDay.date);
               }}
-              inputFormat={"dddd DD MMMM YYYY"}
+              inputFormat={"DD MMMM YYYY"}
               value={oneDayDate}
               dayClassName={(date, modifiers) =>
                 cx({
@@ -429,75 +434,61 @@ function PrinterManager() {
             />
           </td>
           <td>
-              <Select
-              onChange={(val) => {
-                const selectedTemplate =_.filter(JSON.parse(localStorage.getItem('saves') || '[]'), (data) => data.id === val)[0]
-                console.log(selectedTemplate)
-                const oldDay = day
-                oldDay.cost = selectedTemplate.price
-                oldDay.encerrado= selectedTemplate.encerrado
-                oldDay.lottery2= selectedTemplate.lowerName
-                oldDay.lottery1= selectedTemplate.upperName
-                oldDay.prize = selectedTemplate.prize
-                
-
-                setDay([oldDay])
-                // oldDay.cost = selectedTemplate.p
+            <Select
+              onChange={(v) => {
+                const selectedTemplate = lodash.filter(
+                  templateSaves,
+                  (o) => o.value === v
+                )[0];
+                console.log(selectedTemplate);
+                oneForm.setFieldValue("lottery1", selectedTemplate.lottery1);
+                oneForm.setFieldValue("lottery2", selectedTemplate.lottery2);
+                oneForm.setFieldValue("encerrado", selectedTemplate.encerrado);
+                oneForm.setFieldValue("cost", selectedTemplate.price);
+                oneForm.setFieldValue("prize", selectedTemplate.prize);
+                oneForm.setFieldValue("template", selectedTemplate.color);
               }}
-              data={makeData()}>
-                
-              </Select>
+              clearable
+              placeholder="Seleccionar Plantilla"
+              itemComponent={SelectItem}
+              data={templateSaves}
+              searchable
+              maxDropdownHeight={200}
+              nothingFound="Nobody here"
+            />
           </td>
-          <td>{day.lottery1}</td>
-          <td>{day.lottery2}</td>
-          <td>{day.encerrado}</td>
-          <td>{day.cost}</td>
-          <td>{day.prize}</td>
-          <td>{template(day.template)}</td>
+          <td {...oneForm.getInputProps("lottery1")}>
+            {oneForm.values.lottery1}
+          </td>
+          <td {...oneForm.getInputProps("lottery2")}>
+            {oneForm.values.lottery2}
+          </td>
+          <td {...oneForm.getInputProps("encerrado")}>
+            {oneForm.values.encerrado}
+          </td>
+          <td {...oneForm.getInputProps("cost")}>{oneForm.values.cost}</td>
+          <td {...oneForm.getInputProps("prize")}>{oneForm.values.prize}</td>
+          <td {...oneForm.getInputProps("template")}>
+            {template(oneForm.values.template)}
+          </td>
+          <Affix position={{ bottom: 20, right: 20 }}>
+            <Button
+              type="submit"
+              onClick={() =>
+                oneForm.validate()
+                  ? send1ToPrint(oneForm.values)
+                  : console.log("no se puede")
+              }
+              leftIcon={<ArchiveIcon />}
+            >
+              Imprimir
+            </Button>
+          </Affix>
         </tr>
       ));
 
-  function handlePrint() {
-    if (checked) {
-      const validDates = _.filter(days, (day) => day.date !== "");
-      const validTemplates = _.filter(days, (day) => day.template !== "");
-      if (validDates.length !== 18) {
-        notifications.showNotification({
-          title: "Error",
-          color: "red",
-          message: "Debes seleccionar 18 fechas!",
-        });
-        return;
-      }
-      if (validTemplates.length !== 18) {
-        notifications.showNotification({
-          title: "Error",
-          color: "red",
-          message: "Debes seleccionar 18 plantillas!",
-        });
-        console.log(days);
-        return;
-      }
-    }
-  }
-
-  function makeData() {
-    const saves = JSON.parse(localStorage.getItem('saves') || '[]')
-    const toReturn: { value: string; label: string; }[] = []
-    saves.map((save: any) => {
-      toReturn.push({value: save.id, label: save.templateName})
-    })
-    return toReturn;
-    
-  }
-
   return (
     <div>
-      <Affix position={{ bottom: 20, right: 20 }}>
-        <Button leftIcon={<ArchiveIcon />} onClick={() => handlePrint()}>
-          Imprimir
-        </Button>
-      </Affix>
       <Switch
         label="<-- Cantidad de días a Imprimir"
         onLabel="⠀18"
@@ -522,9 +513,10 @@ function PrinterManager() {
         <tbody>{rows}</tbody>
       </Table>
       <Button
-        onClick={() =>
-          console.log(JSON.parse(localStorage.getItem("saves") || "[]"))
-        }
+        onClick={() => {
+          console.log(JSON.parse(localStorage.getItem("saves") || "[]"));
+          console.log(oneForm.values);
+        }}
       >
         Imprimir plantillas
       </Button>

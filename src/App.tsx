@@ -42,6 +42,7 @@ import { restartBackend, stopBackend } from "./utils/commands";
 import { shared } from "@agile-ts/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import PrinterReWork from "./components/PrinterReWork";
+import TemplateSelector from "./TemplateSelector";
 
 export const useStyles = createStyles((theme) => ({
   button: {

@@ -34,7 +34,7 @@ function PrinterReWork() {
       <tbody>
         {templates.map(template => 
           <tr key={nanoid()}>
-            <td>{template.name}</td>
+            <td>{template.label}</td>
           </tr>
           )}
       </tbody>
