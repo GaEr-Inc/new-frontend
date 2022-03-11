@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Divider,
   Loader,
   Modal,
   NumberInput,
@@ -19,7 +20,7 @@ import {
   TransferListData,
   Transition,
 } from "@mantine/core";
-import { useForm, useId } from "@mantine/hooks";
+import { useForm, useId, useScrollLock } from "@mantine/hooks";
 import {
   ArrowUpIcon,
   EyeIcon,
@@ -151,108 +152,114 @@ function UserManager() {
     user.numbers.green.asignedNumbers = newGreens;
     user.numbers.blue.asignedNumbers = newBlues;
   };
+  useScrollLock(true);
   return (
     <div>
-      <Table highlightOnHover>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Telefono</th>
-            <th>Numeros</th>
-            <th>Numeros Aleatorios</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user: User) => (
-            <tr key={user.id}>
-              <td>
-                <Text size="md">{user.name}</Text>
-              </td>
-              <td>{user.phoneNumber}</td>
-              <td>
-                {
+      <Divider my="sm" />
+      <ScrollArea style={{ height: 620 }} offsetScrollbars>
+        <Table highlightOnHover>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Telefono</th>
+              <th>Numeros</th>
+              <th>Numeros Aleatorios</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user: User) => (
+              <tr key={user.id}>
+                <td>
+                  <Text size="md">{user.name}</Text>
+                </td>
+                <td>{user.phoneNumber}</td>
+                <td>
+                  {
+                    <>
+                      <Badge
+                        style={{ marginRight: 3 }}
+                        color="red"
+                        variant="filled"
+                      >
+                        Rojo
+                      </Badge>
+                      <Badge
+                        style={{ marginInline: 3 }}
+                        color="green"
+                        variant="filled"
+                      >
+                        Verde
+                      </Badge>
+                      <Badge style={{ marginLeft: 3 }} variant="filled">
+                        Azul
+                      </Badge>
+                    </>
+                  }
+                </td>
+                <td>
                   <>
                     <Badge
-                      style={{ marginRight: 3 }}
+                      style={{ marginRight: 2 }}
                       color="red"
-                      variant="filled"
+                      variant="outline"
                     >
-                      Rojo
+                      {user.maxRandomNumbers.red}
                     </Badge>
                     <Badge
-                      style={{ marginInline: 3 }}
+                      style={{ marginInline: 2 }}
                       color="green"
-                      variant="filled"
+                      variant="outline"
                     >
-                      Verde
+                      {user.maxRandomNumbers.green}
                     </Badge>
-                    <Badge style={{ marginLeft: 3 }} variant="filled">
-                      Azul
+                    <Badge style={{ marginLeft: 2 }} variant="outline">
+                      {user.maxRandomNumbers.blue}
                     </Badge>
                   </>
-                }
-              </td>
-              <td>
-                <>
-                  <Badge
-                    style={{ marginRight: 2 }}
-                    color="red"
-                    variant="outline"
-                  >
-                    {user.maxRandomNumbers.red}
-                  </Badge>
-                  <Badge
-                    style={{ marginInline: 2 }}
-                    color="green"
-                    variant="outline"
-                  >
-                    {user.maxRandomNumbers.green}
-                  </Badge>
-                  <Badge style={{ marginLeft: 2 }} variant="outline">
-                    {user.maxRandomNumbers.blue}
-                  </Badge>
-                </>
-              </td>
-              <td style={{display: "flex"}}>
-                {opened && userId === user.id ? (
-                  <Loader style={{ marginInline: 5 }} size="sm" />
-                ) : (
+                </td>
+                <td style={{ display: "flex" }}>
+                  {opened && userId === user.id ? (
+                    <Loader style={{ marginInline: 5 }} size="sm" />
+                  ) : (
+                    <ActionIcon
+                      variant="filled"
+                      color="blue"
+                      style={{ marginInline: 5 }}
+                      onClick={() => {
+                        setOpened(true);
+                        setUserId(user.id);
+                        form.setFieldValue("number", user.phoneNumber);
+                        form.setFieldValue("name", user.name);
+                        form.setFieldValue("red", user.maxRandomNumbers.red);
+                        form.setFieldValue(
+                          "green",
+                          user.maxRandomNumbers.green
+                        );
+                        form.setFieldValue("blue", user.maxRandomNumbers.blue);
+                        setCurrentUser(user);
+                        editUser(user);
+                      }}
+                      radius={10}
+                    >
+                      <PencilIcon />
+                    </ActionIcon>
+                  )}
                   <ActionIcon
-                    variant="filled"
                     color="blue"
+                    variant="filled"
                     style={{ marginInline: 5 }}
-                    onClick={() => {
-                      setOpened(true);
-                      setUserId(user.id);
-                      form.setFieldValue("number", user.phoneNumber);
-                      form.setFieldValue("name", user.name);
-                      form.setFieldValue("red", user.maxRandomNumbers.red);
-                      form.setFieldValue("green", user.maxRandomNumbers.green);
-                      form.setFieldValue("blue", user.maxRandomNumbers.blue);
-                      setCurrentUser(user);
-                      editUser(user);
-                    }}
+                    onClick={() => deleteUserById(user.id)}
                     radius={10}
                   >
-                    <PencilIcon />
+                    <TrashIcon />
                   </ActionIcon>
-                )}
-                <ActionIcon
-
-                  color="blue"
-                  variant="filled"
-                  style={{ marginInline: 5 }}
-                  onClick={() => deleteUserById(user.id)}
-                  radius={10}
-                >
-                  <TrashIcon />
-                </ActionIcon>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </ScrollArea>
       <Modal
         opened={opened}
         onClose={() => {
@@ -279,9 +286,11 @@ function UserManager() {
                 editedUser.maxRandomNumbers.green = values.green;
                 editedUser.maxRandomNumbers.blue = values.blue;
                 updateUser(editedUser);
-                userId === "nanoid" ? addUser(editedUser) : updateUserToDB(editedUser) 
+                userId === "nanoid"
+                  ? addUser(editedUser)
+                  : updateUserToDB(editedUser);
                 console.log(values);
-                setOpened(false)
+                setOpened(false);
                 form.reset();
               }
             }
@@ -346,7 +355,7 @@ function UserManager() {
           </Button>
         </form>
       </Modal>
-      <Affix position={{ bottom: 20, right: 20 }}>
+      <Affix position={{ bottom: 20, right: 50 }}>
         <Button
           leftIcon={<PlusCircleIcon />}
           onClick={() => {
@@ -362,8 +371,8 @@ function UserManager() {
               },
             };
             setCurrentUser(voidUser);
-            form.reset()
-            editUser(voidUser)
+            form.reset();
+            editUser(voidUser);
             setUserId("nanoid");
             setOpened(true);
           }}

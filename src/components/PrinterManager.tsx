@@ -420,6 +420,14 @@ function PrinterManager() {
   }
   useScrollLock(true);
 
+  function colorAssignment() {
+    const oldColor = days;
+    for (let i=0; i<days.length; i++) {
+      oldColor[i].template = printColor;
+    }
+    setDays(oldColor);
+  }
+
   const rows =
     checked === "18"
       ? days.map((day, index) => (
@@ -469,7 +477,7 @@ function PrinterManager() {
                         number: 5,
                         cost: selectedTemplate.price,
                         prize: selectedTemplate.prize,
-                        template: "red",
+                        template: printColor,
                       },
                     ][0];
                     console.log("si", index);
@@ -567,9 +575,10 @@ function PrinterManager() {
 
   return (
     <div>
-      <Affix position={{ bottom: 20, right: 42 }}>
+      <Affix position={{ bottom: 20, right: 50 }}>
         <Button
           type="submit"
+          onMouseEnter={()=> colorAssignment()}
           onClick={() => {
             if (checked === "18") {
               checkAllDates();
@@ -630,7 +639,7 @@ function PrinterManager() {
         </Grid.Col>
       </Grid>
       <Divider my="sm" />
-      <ScrollArea style={{ height: 500 }} offsetScrollbars>
+      <ScrollArea style={{ height: 580 }} offsetScrollbars>
         <Table highlightOnHover>
           <thead>
             <tr>

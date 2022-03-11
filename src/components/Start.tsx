@@ -7,9 +7,11 @@ import {
   Center,
   Grid,
   Group,
+  ScrollArea,
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import { useScrollLock } from "@mantine/hooks";
 import { AlertIcon, InfoIcon } from "@primer/octicons-react";
 import _ from "lodash";
 import { nanoid } from "nanoid";
@@ -23,73 +25,108 @@ function Start() {
     theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.gray[7];
 
   const files = useValue(FILES);
-
+  // const files = [
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  // ];
+  useScrollLock(true);
   return (
-    <>
-      {files.length === 0 ? (
-        <Center style={{ paddingTop: "3%" }}>
-          <Alert
-            variant="light"
-            style={{ width: "50%" }}
-            icon={<InfoIcon size={16} />}
-            title="Información"
-            color="teal"
-          >
-            Aqui aparecerán los archivos que vayas creando.
-          </Alert>
-        </Center>
-      ) : (
-        <Grid>
-          {files.map((file, index) => (
-            <Grid.Col
-              key={nanoid()}
-              span={3}
-              style={{ width: 340, minWidth: 310 }}
+    <ScrollArea style={{ height: 670, width: 1220 }} offsetScrollbars>
+      <>
+        {files.length === 0 ? (
+          <Center style={{ paddingTop: "3%" }}>
+            <Alert
+              variant="light"
+              style={{ width: "50%" }}
+              icon={<InfoIcon size={16} />}
+              title="Información"
+              color="teal"
             >
-              <Card shadow="sm">
-                <Group
-                  position="apart"
-                  style={{ marginBottom: 5, marginTop: theme.spacing.sm }}
-                >
-                  <Text weight={500}>{file}</Text>
-                  {_.startsWith(file, "one") ? (
-                    <Badge color="black" variant="light">
-                      Un Dia
-                    </Badge>
-                  ) : (
-                    <Badge color={"red"}>18 Dias</Badge>
-                  )}
-                </Group>
-                <a
-                  style={{ textDecoration: "none" }}
-                  href={`http://localhost:4000/file/${file}`}
-                  download
-                >
+              Aqui aparecerán los archivos que vayas creando.
+            </Alert>
+          </Center>
+        ) : (
+          <Grid>
+            {files.map((file, index) => (
+              <Grid.Col
+                key={nanoid()}
+                span={3}
+                style={{ width: 290, minWidth: 290 }}
+              >
+                <Card shadow="sm">
+                  <Group
+                    position="apart"
+                    style={{ marginBottom: 5, marginTop: theme.spacing.sm }}
+                  >
+                    <Text weight={500}>{file}</Text>
+                    {_.startsWith(file, "one") ? (
+                      <Badge color="black" variant="light">
+                        Un Dia
+                      </Badge>
+                    ) : (
+                      <Badge color={"red"}>18 Dias</Badge>
+                    )}
+                  </Group>
+                  <a
+                    style={{ textDecoration: "none" }}
+                    href={`http://localhost:4000/file/${file}`}
+                    download
+                  >
+                    <Button
+                      variant="light"
+                      color="green"
+                      fullWidth
+                      style={{ marginTop: 14 }}
+                    >
+                      Descargar
+                    </Button>
+                  </a>
+
                   <Button
                     variant="light"
-                    color="green"
+                    color="red"
                     fullWidth
+                    onClick={() => deleteFile(file)}
                     style={{ marginTop: 14 }}
                   >
-                    Descargar
+                    Eliminar
                   </Button>
-                </a>
-
-                <Button
-                  variant="light"
-                  color="red"
-                  fullWidth
-                  onClick={() => deleteFile(file)}
-                  style={{ marginTop: 14 }}
-                >
-                  Eliminar
-                </Button>
-              </Card>
-            </Grid.Col>
-          ))}
-        </Grid>
-      )}
-    </>
+                </Card>
+              </Grid.Col>
+            ))}
+          </Grid>
+        )}
+      </>
+    </ScrollArea>
   );
 }
 

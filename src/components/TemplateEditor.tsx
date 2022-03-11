@@ -10,6 +10,7 @@ import {
   Image,
   NumberInput,
   Popover,
+  ScrollArea,
   SegmentedControl,
   Select,
   Space,
@@ -38,7 +39,7 @@ function TemplateEditor() {
   const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
   );
-  const [printColor, setPrintColor] = useState<string>("blue");
+  const [printColor, setPrintColor] = useState<string>("red");
   const [editPopOver, setEditPopOver] = useState<boolean>(false);
   // const [error, setError] = useState<string>(null);
   const form = useForm({
@@ -129,7 +130,13 @@ function TemplateEditor() {
         paddingRight: "10%",
       }}
     >
-      <Grid grow justify="center" align="center" gutter={50}>
+      <Grid
+        grow
+        justify="center"
+        align="center"
+        gutter={50}
+        style={{ paddingTop: "6%" }}
+      >
         <Grid.Col span={4}>
           <Image
             style={
@@ -152,7 +159,7 @@ function TemplateEditor() {
           Color de la Muestra
           <SegmentedControl
             color={printColor}
-            onChange={(v)=>setPrintColor(v)}
+            onChange={(v) => setPrintColor(v)}
             transitionDuration={250}
             style={{ width: "100%" }}
             data={[
@@ -248,20 +255,22 @@ function TemplateEditor() {
                   </Button>
                 }
               >
-                <Table highlightOnHover>
-                  <thead>
-                    <tr>
-                      <th>
-                        {templateRows.length > 0
-                          ? "Nombre de plantilla"
-                          : "No existen plantillas creadas"}
-                      </th>
-                      <th></th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>{templateRows}</tbody>
-                </Table>
+                <ScrollArea style={{ height: 250 }}>
+                  <Table highlightOnHover>
+                    <thead>
+                      <tr>
+                        <th>
+                          {templateRows.length > 0
+                            ? "Nombre de plantilla"
+                            : "No existen plantillas creadas"}
+                        </th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>{templateRows}</tbody>
+                  </Table>
+                </ScrollArea>
               </Popover>
               <Button
                 type="submit"

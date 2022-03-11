@@ -112,7 +112,7 @@ function App() {
               padding="md"
               hiddenBreakpoint="sm"
               hidden={!opened}
-              width={{ sm: 400, lg: 400 }}
+              width={{ sm: 40, lg: 260 }}
             >
               <Navbar.Section grow>
                 <Link to="/" style={{ textDecoration: "none" }}>
