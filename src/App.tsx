@@ -136,13 +136,6 @@ function App() {
                     label={"Imprimir"}
                   />
                 </Link>
-                <Link to="/printerrework" style={{ textDecoration: "none" }}>
-                  <NavButton
-                    icon={<FileSymlinkFileIcon />}
-                    color="red"
-                    label={"Imprimir Remix"}
-                  />
-                </Link>
                 <Link to="/templateEditor" style={{ textDecoration: "none" }}>
                   <NavButton
                     icon={<FileMediaIcon />}
@@ -215,7 +208,6 @@ function App() {
             <Route path="/" element={<Start />} />
             <Route path="/users" element={<UserManager />} />
             <Route path="/printer" element={<PrinterManager />} />
-            <Route path="/printerrework" element={<PrinterReWork />} />
             <Route path="/templateEditor" element={<TemplateEditor />} />
           </Routes>
         </AppShell>

@@ -85,8 +85,8 @@ export function send1ToPrint(day: day, color: string) {
   }, color]);
 }
 
-export function send18ToPrint(days: day[]) {
-  axios.post(`${server}/pdf/print`, days);
+export function send18ToPrint(days: day[], color: string) {
+  axios.post(`${server}/pdf/print`, [days, color]);
 }
 
 export function checkBackend() {

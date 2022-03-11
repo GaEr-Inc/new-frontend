@@ -26,7 +26,9 @@ import { Calendar, DatePicker, isSameDate } from "@mantine/dates";
 import {
   ArchiveIcon,
   ArrowUpIcon,
+  BrowserIcon,
   CheckIcon,
+  NoteIcon,
   TrashIcon,
 } from "@primer/octicons-react";
 import dayjs from "dayjs";
@@ -48,6 +50,7 @@ import lodash from "lodash";
 import { send18ToPrint, send1ToPrint, updateAll } from "../utils/requests";
 import { useSelector } from "@agile-ts/react";
 import { AlertIcon, InfoIcon } from "@primer/octicons-react";
+import { StringDecoder } from "string_decoder";
 
 dayjs.extend(updateLocale);
 
@@ -122,6 +125,7 @@ function PrinterManager() {
   const [checked, setChecked] = useState<string>("1");
   const [oneDayDate, setOneDayDate] = useState<Date>();
   const [printColor, setPrintColor] = useState<string>("red");
+  const [selectValue, setSelectValue] = useState<string>("");
   const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
   );
@@ -397,7 +401,7 @@ function PrinterManager() {
         autoClose: true,
         icon: <CheckIcon />,
       });
-      send18ToPrint(days);
+      send18ToPrint(days, printColor);
     } else {
       notifications.showNotification({
         title: "No se puede generar el documento",
@@ -434,6 +438,7 @@ function PrinterManager() {
                     .format("DD MMMM YYYY")
                     .toString();
                   setDays(oldDays);
+                  forceUpdate();
                 }}
                 inputFormat={"DD MMMM YYYY"}
                 dayClassName={(date, modifiers) =>
@@ -453,6 +458,7 @@ function PrinterManager() {
                     templateSaves,
                     (o) => o.value === v
                   )[0];
+                  setSelectValue(selectedTemplate.label);
                   if (v) {
                     oldDays[index] = [
                       {
@@ -485,6 +491,7 @@ function PrinterManager() {
                 searchable
                 maxDropdownHeight={400}
                 nothingFound="Nobody here"
+                value={selectValue}
               />
             </td>
             <td>{days[index].lottery1}</td>
@@ -534,7 +541,6 @@ function PrinterManager() {
                   );
                   oneForm.setFieldValue("cost", selectedTemplate.price);
                   oneForm.setFieldValue("prize", selectedTemplate.prize);
-                  oneForm.setFieldValue("template", selectedTemplate.color);
                 }}
                 clearable
                 placeholder="Seleccionar Plantilla"
@@ -565,15 +571,28 @@ function PrinterManager() {
         <Button
           type="submit"
           onClick={() => {
-            if (checked==="18") {
-              console.log("Empezando");
+            if (checked === "18") {
               checkAllDates();
             } else {
+              console.log(oneForm.values);
               if (oneForm.validate()) {
-                send1ToPrint(oneForm.values, checked);
+                notifications.showNotification({
+                  title: "El documento empezó a generarse",
+                  message:
+                    "El documento demora unos minutos en generarse, por favor espere.",
+                  color: "blue",
+                  autoClose: true,
+                  icon: <CheckIcon />,
+                });
+                send1ToPrint(oneForm.values, printColor);
               } else {
-                console.log("no se puede");
-                console.log(oneForm.values);
+                notifications.showNotification({
+                  title: "No se puede generar el documento",
+                  message: "Hacen falta campos por seleccionar",
+                  color: "red",
+                  autoClose: true,
+                  icon: <AlertIcon />,
+                });
               }
             }
           }}
@@ -582,7 +601,7 @@ function PrinterManager() {
           Imprimir
         </Button>
       </Affix>
-      <Grid gutter="xs" style={{ paddingBottom: "%" }} >
+      <Grid gutter="xs" style={{ paddingBottom: "%" }}>
         <Grid.Col span={8}>
           <SegmentedControl
             onChange={(v) => setChecked(v)}
@@ -596,7 +615,10 @@ function PrinterManager() {
         <Grid.Col span={4}>
           <SegmentedControl
             color={printColor}
-            onChange={(v) => setPrintColor(v)}
+            onChange={(v) => {
+              setPrintColor(v);
+              oneForm.setFieldValue("template", v);
+            }}
             transitionDuration={50}
             style={{ width: "100%" }}
             data={[
@@ -609,7 +631,7 @@ function PrinterManager() {
       </Grid>
       <Divider my="sm" />
       <ScrollArea style={{ height: 500 }} offsetScrollbars>
-        <Table highlightOnHover >
+        <Table highlightOnHover>
           <thead>
             <tr>
               <th>Fecha</th>
