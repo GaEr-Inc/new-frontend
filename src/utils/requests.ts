@@ -21,6 +21,10 @@ export async function getFiles() {
   return (await axios.get(`${server}/files`)).data;
 }
 
+export function resetDB() {
+  axios.delete(`${server}/db/all`)
+}
+
 export function deleteFile(file: string) {
   axios.get(`${server}/file/delete/${file}`);
 }

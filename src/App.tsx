@@ -29,15 +29,13 @@ import PrinterManager from "./components/PrinterManager";
 import Start from "./components/Start";
 import { useInterval } from "@mantine/hooks";
 import { CONNECTION_STATE, TOKEN } from "./utils/globalStates";
-import { getToken, getUsers, updateAll } from "./utils/requests";
+import { getToken, getUsers, resetDB, updateAll } from "./utils/requests";
 import reactIntegration, { useAgile } from "@agile-ts/react";
 import TemplateEditor from "./components/TemplateEditor";
 import * as _ from "lodash";
 import { restartBackend, stopBackend } from "./utils/commands";
 import { shared } from "@agile-ts/core";
 import { NotificationsProvider } from "@mantine/notifications";
-import PrinterReWork from "./components/PrinterReWork";
-import TemplateSelector from "./TemplateSelector";
 
 export const useStyles = createStyles((theme) => ({
   button: {
@@ -75,6 +73,11 @@ function App() {
   const { classes } = useStyles();
 
   useEffect(() => {
+    if (localStorage.getItem('dbset') === null) {
+      resetDB();
+      localStorage.setItem('dbset', "done");
+      console.log("DB Reseted");
+    }
     updateUsersInterval.start();
 
     return () => {
@@ -84,6 +87,8 @@ function App() {
 
   const [dark, setDark] = useState<boolean>(false);
   const connectionStatus = useAgile(CONNECTION_STATE);
+
+
 
   return (
     <MantineProvider

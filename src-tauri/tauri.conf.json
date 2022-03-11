@@ -23,6 +23,7 @@
         "icons/icon.ico"
       ],
       "resources": [
+        "bootstrap/"
       ],
       "externalBin": [],
       "copyright": "",
@@ -64,6 +65,26 @@
           {
             "name": "wsl",
             "cmd": "wsl",
+            "args": true
+          },
+          {
+            "name": "node",
+            "cmd": "node",
+            "args": true
+          },
+          {
+            "name": "npm",
+            "cmd": "npm",
+            "args": true
+          },
+          {
+            "name": "yarn",
+            "cmd": "yarn",
+            "args": true
+          },
+          {
+            "name": "cmd",
+            "cmd": "cmd",
             "args": true
           }
         ],
