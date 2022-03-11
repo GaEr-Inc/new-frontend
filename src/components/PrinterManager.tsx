@@ -8,6 +8,7 @@ import {
   MultiSelect,
   NativeSelect,
   Select,
+  SelectChevronIcon,
   Switch,
   Table,
   Text,
@@ -24,9 +25,16 @@ import { nanoid } from "nanoid";
 import _ from "lodash";
 import { useNotifications } from "@mantine/notifications";
 import { template } from "./TemplateEditor";
-import { useForm } from "@mantine/hooks";
+import {
+  useDidUpdate,
+  useForceUpdate,
+  useForm,
+  useInterval,
+  useSetState,
+} from "@mantine/hooks";
 import lodash from "lodash";
-import { send1ToPrint } from "../utils/requests";
+import { send1ToPrint, updateAll } from "../utils/requests";
+import { useSelector } from "@agile-ts/react";
 
 dayjs.extend(updateLocale);
 
@@ -96,9 +104,10 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
 );
 
 function PrinterManager() {
+  const forceUpdate = useForceUpdate();
   const { classes, cx } = useStyles();
   const [values, setValues] = useState<Date[]>([]);
-  const [checked, setChecked] = useState<boolean>(false);
+  const [checked, setChecked] = useState<boolean>(true);
   const [oneDayDate, setOneDayDate] = useState<Date>();
   const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
@@ -111,190 +120,186 @@ function PrinterManager() {
   const [datesWithFormat, setDatesWithFormat] = useState<Date[]>(Array(18));
   const [days, setDays] = useState<day[]>([
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
     {
-      date: "",
+      date: "22 Febrero 2022",
       lottery1: "Chontico",
       lottery2: "Noche",
       encerrado: "3000",
       number: 3,
       cost: "500",
       prize: "250000",
-      template: "",
+      template: "red",
     },
     {
-      date: "",
+      date: "33 Febrero 2022",
       lottery1: "Bogota",
       lottery2: "Javier",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
-      template: "",
+      template: "blue",
     },
   ]);
-
-  useEffect(() => {
-    console.log(days);
-  }, [days]);
 
   const oneForm = useForm({
     initialValues: {
@@ -308,7 +313,7 @@ function PrinterManager() {
       template: "",
     },
     validationRules: {
-      date: (value) => value.length > 0 && !(value==="Invalid Date"),
+      date: (value) => value.length > 0 && !(value === "Invalid Date"),
       lottery1: (value) => value.length > 0,
       lottery2: (value) => value.length > 0,
       encerrado: (value) => value.length > 0,
@@ -375,12 +380,12 @@ function PrinterManager() {
               onChange={(date: Date) => {
                 const oldDays = days;
                 oldDays[index].date = dayjs(date)
-                  .format("dddd DD MMMM YYYY")
+                  .format("DD MMMM YYYY")
                   .toString();
                 setDays(oldDays);
-                console.log(days);
+                // console.log(days);
               }}
-              inputFormat={"dddd DD MMMM YYYY"}
+              inputFormat={"DD MMMM YYYY"}
               dayClassName={(date, modifiers) =>
                 cx({
                   [classes.weekend]: modifiers.weekend,
@@ -390,6 +395,38 @@ function PrinterManager() {
           </td>
           <td>
             <Select
+              onDropdownClose={() => setDays(days)}
+              onChange={(v) => {
+                const oldDays = days;
+                const selectedTemplate = lodash.filter(
+                  templateSaves,
+                  (o) => o.value === v
+                )[0];
+                if (v) {
+                  oldDays[index] = [
+                    {
+                      date: days[index].date,
+                      lottery1: selectedTemplate.lottery1,
+                      lottery2: selectedTemplate.lottery2,
+                      encerrado: selectedTemplate.encerrado,
+                      number: 5,
+                      cost: selectedTemplate.price,
+                      prize: selectedTemplate.prize,
+                      template: selectedTemplate.color,
+                    },
+                  ][0];
+                  console.log("si", index);
+                  setDays(oldDays);
+                  console.log(days[index]);
+                } else {
+                  console.log("no", index);
+                }
+                // oldDays[index].lottery1 = selectedTemplate.lottery1;
+                // oldDays[index].lottery2 = selectedTemplate.lottery2;
+                // setDays(oldDays);
+                // console.log(oldDays[index]);
+                forceUpdate()
+              }}
               clearable
               placeholder="Pick one"
               itemComponent={SelectItem}
@@ -399,12 +436,12 @@ function PrinterManager() {
               nothingFound="Nobody here"
             />
           </td>
-          <td>{day.lottery1}</td>
-          <td>{day.lottery2}</td>
-          <td>{day.encerrado}</td>
-          <td>{day.cost}</td>
-          <td>{day.prize}</td>
-          <td>{template(day.template)}</td>
+          <td>{days[index].lottery1}</td>
+          <td>{days[index].lottery2}</td>
+          <td>{days[index].encerrado}</td>
+          <td>{days[index].cost}</td>
+          <td>{days[index].prize}</td>
+          <td>{template(days[index].template)}</td>
         </tr>
       ))
     : day.map((day, index) => (
@@ -417,9 +454,7 @@ function PrinterManager() {
               placeholder="Fecha de la boleta"
               onChange={(date: Date) => {
                 const oldDay = day;
-                oldDay.date = dayjs(date)
-                  .format("DD MMMM YYYY")
-                  .toString();
+                oldDay.date = dayjs(date).format("DD MMMM YYYY").toString();
                 setDay([oldDay]);
                 setOneDayDate(date);
                 oneForm.setFieldValue("date", oldDay.date);
@@ -471,24 +506,28 @@ function PrinterManager() {
           <td {...oneForm.getInputProps("template")}>
             {template(oneForm.values.template)}
           </td>
-          <Affix position={{ bottom: 20, right: 20 }}>
-            <Button
-              type="submit"
-              onClick={() =>
-                oneForm.validate()
-                  ? send1ToPrint(oneForm.values)
-                  : console.log("no se puede")
-              }
-              leftIcon={<ArchiveIcon />}
-            >
-              Imprimir
-            </Button>
-          </Affix>
         </tr>
       ));
 
   return (
     <div>
+      <Affix position={{ bottom: 20, right: 20 }}>
+        <Button
+          type="submit"
+          onClick={() => {
+            if (checked) {
+              console.log(days);
+            } else {
+              oneForm.validate()
+                ? send1ToPrint(oneForm.values)
+                : console.log("no se puede");
+            }
+          }}
+          leftIcon={<ArchiveIcon />}
+        >
+          Imprimir
+        </Button>
+      </Affix>
       <Switch
         label="<-- Cantidad de días a Imprimir"
         onLabel="⠀18"
@@ -515,7 +554,7 @@ function PrinterManager() {
       <Button
         onClick={() => {
           console.log(JSON.parse(localStorage.getItem("saves") || "[]"));
-          console.log(oneForm.values);
+          // console.log(manyForms.values.days);
         }}
       >
         Imprimir plantillas
