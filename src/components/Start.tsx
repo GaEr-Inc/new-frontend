@@ -10,7 +10,7 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { AlertIcon } from "@primer/octicons-react";
+import { AlertIcon, InfoIcon } from "@primer/octicons-react";
 import _ from "lodash";
 import { nanoid } from "nanoid";
 import { FILES } from "../utils/globalStates";
@@ -25,22 +25,28 @@ function Start() {
   const files = useValue(FILES);
 
   return (
-      <>
-      {files.length === 0 ? 
-        <Center>
+    <>
+      {files.length === 0 ? (
+        <Center style={{ paddingTop: "3%" }}>
           <Alert
-            icon={<AlertIcon size={16} />}
+            variant="light"
+            style={{ width: "50%" }}
+            icon={<InfoIcon size={16} />}
             title="Información"
-            color="yellow"
+            color="teal"
           >
-            Aqui Apareceran los archivos que vayas creando
+            Aqui aparecerán los archivos que vayas creando.
           </Alert>
         </Center>
-       : 
+      ) : (
         <Grid>
           {files.map((file, index) => (
-            <Grid.Col key={nanoid()} span={3} style={{ width: 340, minWidth: 310 }}>
-              <Card shadow="sm" >
+            <Grid.Col
+              key={nanoid()}
+              span={3}
+              style={{ width: 340, minWidth: 310 }}
+            >
+              <Card shadow="sm">
                 <Group
                   position="apart"
                   style={{ marginBottom: 5, marginTop: theme.spacing.sm }}
@@ -82,8 +88,8 @@ function Start() {
             </Grid.Col>
           ))}
         </Grid>
-      }
-    </> 
+      )}
+    </>
   );
 }
 

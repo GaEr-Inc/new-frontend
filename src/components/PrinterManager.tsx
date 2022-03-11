@@ -1,10 +1,12 @@
 import {
   Affix,
+  Alert,
   Avatar,
   Badge,
   Button,
   createStyles,
   Group,
+  Modal,
   MultiSelect,
   NativeSelect,
   Select,
@@ -17,7 +19,12 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { Calendar, DatePicker, isSameDate } from "@mantine/dates";
-import { ArchiveIcon, ArrowUpIcon, TrashIcon } from "@primer/octicons-react";
+import {
+  ArchiveIcon,
+  ArrowUpIcon,
+  CheckIcon,
+  TrashIcon,
+} from "@primer/octicons-react";
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import React, { forwardRef, useEffect, useState } from "react";
@@ -33,8 +40,9 @@ import {
   useSetState,
 } from "@mantine/hooks";
 import lodash from "lodash";
-import { send1ToPrint, updateAll } from "../utils/requests";
+import { send18ToPrint, send1ToPrint, updateAll } from "../utils/requests";
 import { useSelector } from "@agile-ts/react";
+import { AlertIcon, InfoIcon } from "@primer/octicons-react";
 
 dayjs.extend(updateLocale);
 
@@ -106,198 +114,193 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
 function PrinterManager() {
   const forceUpdate = useForceUpdate();
   const { classes, cx } = useStyles();
-  const [values, setValues] = useState<Date[]>([]);
-  const [checked, setChecked] = useState<boolean>(true);
+  const [checked, setChecked] = useState<boolean>(false);
   const [oneDayDate, setOneDayDate] = useState<Date>();
   const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
   );
-  const theme = useMantineTheme();
+  const [eighteenDates, setEighteenDates] = useState<Date[]>(Array(18));
   const notifications = useNotifications();
-  const inputFormat = values
-    .map((date) => dayjs(date).format("dddd DD MMMM YYYY"))
-    .join(", ");
-  const [datesWithFormat, setDatesWithFormat] = useState<Date[]>(Array(18));
   const [days, setDays] = useState<day[]>([
     {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
-    },
-    {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
-    },
-    {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
-    },
-    {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
-    },
-    {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
-    },
-    {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
-    },
-    {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
-    },
-    {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
-    },
-    {
-      date: "22 Febrero 2022",
-      lottery1: "Chontico",
-      lottery2: "Noche",
-      encerrado: "3000",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
       number: 3,
-      cost: "500",
-      prize: "250000",
-      template: "red",
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
     {
-      date: "33 Febrero 2022",
-      lottery1: "Bogota",
-      lottery2: "Javier",
-      encerrado: "3000",
-      number: 5,
-      cost: "600",
-      prize: "260000",
-      template: "blue",
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
+    },
+    {
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
+    },
+    {
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
+    },
+    {
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
+    },
+    {
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
+    },
+    {
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
+    },
+    {
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
+    },
+    {
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
+    },
+    {
+      date: "Date",
+      lottery1: "nombre1",
+      lottery2: "nombre2",
+      encerrado: "encerrado",
+      number: 3,
+      cost: "precio",
+      prize: "premio",
+      template: "anycolor",
     },
   ]);
 
@@ -369,6 +372,42 @@ function PrinterManager() {
     },
   ]);
 
+  function checkAllDates() {
+    const chekingDate = lodash.filter(
+      days,
+      (o) => o.date === "Date" || o.date === "Invalid Date"
+    )[0];
+    const chekingLottery1 = lodash.filter(
+      days,
+      (o) => o.lottery1 === "nombre1"
+    )[0];
+
+    if (!chekingDate && !chekingLottery1) {
+      notifications.showNotification({
+        title: "El documento empezó a generarse",
+        message: "El documento demora unos minutos en generarse, por favor espere.",
+        color: "blue",
+        autoClose: true,
+        icon: <CheckIcon />,
+      });
+      send18ToPrint(days);
+    } else {
+      notifications.showNotification({
+        title: "No se puede generar el documento",
+        message: "Hacen falta campos por seleccionar",
+        color: "red",
+        autoClose: true,
+        icon: <AlertIcon />,
+      });
+      chekingDate
+        ? console.log("Hace falta una fecha por seleccionar")
+        : console.log("Todo bem");
+      chekingLottery1
+        ? console.log("Hace falta una plantilla por seleccionar")
+        : console.log("todo bem too");
+    }
+  }
+
   const rows = checked
     ? days.map((day, index) => (
         <tr key={nanoid()}>
@@ -378,12 +417,14 @@ function PrinterManager() {
               minDate={dayjs(new Date()).toDate()}
               placeholder="Fecha de la boleta"
               onChange={(date: Date) => {
+                const withoutFormat = eighteenDates;
+                withoutFormat[index] = date;
+                setEighteenDates(withoutFormat);
                 const oldDays = days;
                 oldDays[index].date = dayjs(date)
                   .format("DD MMMM YYYY")
                   .toString();
                 setDays(oldDays);
-                // console.log(days);
               }}
               inputFormat={"DD MMMM YYYY"}
               dayClassName={(date, modifiers) =>
@@ -391,6 +432,7 @@ function PrinterManager() {
                   [classes.weekend]: modifiers.weekend,
                 })
               }
+              value={eighteenDates[index]}
             />
           </td>
           <td>
@@ -425,7 +467,7 @@ function PrinterManager() {
                 // oldDays[index].lottery2 = selectedTemplate.lottery2;
                 // setDays(oldDays);
                 // console.log(oldDays[index]);
-                forceUpdate()
+                forceUpdate();
               }}
               clearable
               placeholder="Pick one"
@@ -516,11 +558,14 @@ function PrinterManager() {
           type="submit"
           onClick={() => {
             if (checked) {
-              console.log(days);
+              console.log("Empezando");
+              checkAllDates();
             } else {
-              oneForm.validate()
-                ? send1ToPrint(oneForm.values)
-                : console.log("no se puede");
+              if (oneForm.validate()) {
+                send1ToPrint(oneForm.values);
+              } else {
+                console.log("no se puede");
+              }
             }
           }}
           leftIcon={<ArchiveIcon />}
@@ -551,14 +596,6 @@ function PrinterManager() {
         </thead>
         <tbody>{rows}</tbody>
       </Table>
-      <Button
-        onClick={() => {
-          console.log(JSON.parse(localStorage.getItem("saves") || "[]"));
-          // console.log(manyForms.values.days);
-        }}
-      >
-        Imprimir plantillas
-      </Button>
     </div>
   );
 }
