@@ -4,20 +4,24 @@ import {
   Badge,
   Button,
   Checkbox,
+  Divider,
   Grid,
   Group,
   Image,
   NumberInput,
   Popover,
+  SegmentedControl,
   Select,
   Space,
   Table,
+  Tabs,
   TextInput,
 } from "@mantine/core";
-import { useForm } from "@mantine/hooks";
+import { useForm, useScrollLock } from "@mantine/hooks";
 import { nanoid } from "nanoid";
 import { PencilIcon, TrashIcon } from "@primer/octicons-react";
 import * as lodash from "lodash";
+import { StringifyOptions } from "querystring";
 
 export interface template {
   value: string;
@@ -34,13 +38,14 @@ function TemplateEditor() {
   const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
   );
+  const [printColor, setPrintColor] = useState<string>("blue");
   const [editPopOver, setEditPopOver] = useState<boolean>(false);
   // const [error, setError] = useState<string>(null);
   const form = useForm({
     initialValues: {
       value: "",
       label: "",
-      color: "",
+      color: "red",
       prize: "",
       lottery1: "",
       lottery2: "",
@@ -112,32 +117,59 @@ function TemplateEditor() {
     </tr>
   ));
 
+  useScrollLock(true);
+
   return (
     <div
       style={{
         width: "100%",
+        height: "100%",
         margin: "auto",
-        paddingLeft: "10%",
-        paddingRight: "15%",
+        paddingLeft: "5%",
+        paddingRight: "10%",
       }}
     >
-      <Grid grow justify="center" align="center" gutter="xl">
-        <Grid.Col span={1}>
+      <Grid grow justify="center" align="center" gutter={50}>
+        <Grid.Col span={4}>
           <Image
+            style={
+              {
+                // paddingBottom: "10%",
+              }
+            }
             radius="md"
-            src={`http://localhost:4000/svg/generate/${
-              form.values.color ? form.values.color : "blue"
-            }/fecha/${form.values.lottery1 ? form.values.lottery1 : " "}/${
-              form.values.lottery2 ? form.values.lottery2 : " "
-            }/${form.values.encerrado ? form.values.encerrado : " "}/000/${
-              form.values.price ? form.values.price : " "
-            }/${form.values.prize ? form.values.prize : " "}/`}
+            src={`http://localhost:4000/svg/generate/${printColor}/fecha/${
+              form.values.lottery1 ? form.values.lottery1 : " "
+            }/${form.values.lottery2 ? form.values.lottery2 : " "}/${
+              form.values.encerrado ? form.values.encerrado : " "
+            }/000/${form.values.price ? form.values.price : " "}/${
+              form.values.prize ? form.values.prize : " "
+            }/`}
             alt="Random unsplash image"
           />
         </Grid.Col>
-
         <Grid.Col span={1}>
+          Color de la Muestra
+          <SegmentedControl
+            color={printColor}
+            onChange={(v)=>setPrintColor(v)}
+            transitionDuration={250}
+            style={{ width: "100%" }}
+            data={[
+              { label: "Rojo", value: "red" },
+              { label: "Verde", value: "green" },
+              { label: "Azul", value: "blue" },
+            ]}
+          />
+          <Space h="xl" />
           <form
+            // style={{
+            //   width: "100%",
+            //   height: "10%",
+            //   justifyContent: "left",
+            //   paddingBottom: "20%",
+            //   paddingTop: "5%",
+            // }}
             onSubmit={form.onSubmit((values) => {
               saveTemplates(values);
               form.reset();
@@ -148,45 +180,6 @@ function TemplateEditor() {
               label="Nombre Guardado"
               placeholder="Nombre de la plantilla"
               {...form.getInputProps("label")}
-            />
-            <Select
-              {...form.getInputProps("color")}
-              label="Color de la Plantilla"
-              required
-              placeholder="Escoge un Color"
-              itemComponent={forwardRef(({ label, value, ...others }, ref) => (
-                <div ref={ref} {...others}>
-                  <Badge
-                    style={{ marginRight: 3 }}
-                    color={value}
-                    variant="filled"
-                    // fullWidth
-                    // radius="xs"
-                  >
-                    {label}
-                  </Badge>
-                </div>
-              ))}
-              // onChange={(value: "red" | "green" | "blue") => {
-              //   value ? setTemplate(value) : setTemplate("blue");
-              //   form.setFieldValue("color", value);
-              // }}
-              data={[
-                { value: "red", label: "Rojo" },
-                { value: "green", label: "Verde" },
-                { value: "blue", label: "Azul" },
-              ]}
-              clearable
-              maxDropdownHeight={400}
-              nothingFound="Nobody here"
-              // filter={(value, item) =>
-              //   item.label
-              //     ?.toLowerCase()
-              //     .includes(value.toLowerCase().trim()) ||
-              //   item.description
-              //     .toLowerCase()
-              //     .includes(value.toLowerCase().trim())
-              // }
             />
             <TextInput
               type="number"
@@ -272,9 +265,11 @@ function TemplateEditor() {
               </Popover>
               <Button
                 type="submit"
-                onClick={()=>deleteTemplateById(form.values.value)}
+                onClick={() => deleteTemplateById(form.values.value)}
                 onMouseEnter={() => {
-                  form.values.value ? "" : form.setFieldValue("value", nanoid());
+                  form.values.value
+                    ? ""
+                    : form.setFieldValue("value", nanoid());
                 }}
               >
                 Guardar

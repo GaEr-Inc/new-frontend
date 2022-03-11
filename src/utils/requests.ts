@@ -72,8 +72,8 @@ export function updateUserToDB(user: User) {
   });
 }
 
-export function send1ToPrint(day: day) {
-  axios.post(`${server}/pdf/printone`, {
+export function send1ToPrint(day: day, color: string) {
+  axios.post(`${server}/pdf/printone`, [{
     date: day.date,
     lottery1: day.lottery1,
     lottery2: day.lottery2,
@@ -82,7 +82,7 @@ export function send1ToPrint(day: day) {
     cost: day.cost,
     prize: day.prize,
     template: day.template,
-  });
+  }, color]);
 }
 
 export function send18ToPrint(days: day[]) {
