@@ -22,7 +22,11 @@ export async function getFiles() {
 }
 
 export function resetDB() {
-  axios.delete(`${server}/db/all`)
+  axios.delete(`${server}/db/all`).then(res => 
+    {
+      if (res.status === 200)
+        localStorage.setItem('dbset', "done");
+    })
 }
 
 export function deleteFile(file: string) {

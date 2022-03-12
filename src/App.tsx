@@ -75,7 +75,6 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem('dbreset') === null) {
       resetDB();
-      localStorage.setItem('dbset', "done");
       console.log("DB Reseted");
     }
     updateUsersInterval.start();
