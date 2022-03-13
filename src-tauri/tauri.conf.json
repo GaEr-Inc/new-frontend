@@ -10,7 +10,6 @@
     "beforeBuildCommand": "yarn build"
   },
   "tauri": {
-    
     "bundle": {
       "active": true,
       "targets": "all",
