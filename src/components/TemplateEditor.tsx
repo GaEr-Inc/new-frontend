@@ -18,7 +18,7 @@ import {
   Tabs,
   TextInput,
 } from "@mantine/core";
-import { useForm, useScrollLock } from "@mantine/hooks";
+import { useForm, useScrollLock, useViewportSize } from "@mantine/hooks";
 import { nanoid } from "nanoid";
 import { PencilIcon, TrashIcon } from "@primer/octicons-react";
 import * as lodash from "lodash";
@@ -36,6 +36,7 @@ export interface template {
 }
 
 function TemplateEditor() {
+  const { height, width } = useViewportSize();
   const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
   );
@@ -121,173 +122,175 @@ function TemplateEditor() {
   useScrollLock(true);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        margin: "auto",
-        paddingLeft: "5%",
-        paddingRight: "10%",
-      }}
-    >
-      <Grid
-        grow
-        justify="center"
-        align="center"
-        gutter={50}
-        style={{ paddingTop: "6%" }}
+    <ScrollArea style={{ height: height - 120 }} offsetScrollbars>
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          margin: "auto",
+          paddingLeft: "5%",
+          paddingRight: "10%",
+        }}
       >
-        <Grid.Col span={4}>
-          <Image
-            style={
-              {
-                // paddingBottom: "10%",
+        <Grid
+          grow
+          justify="center"
+          align="center"
+          gutter={50}
+          style={{ paddingTop: "6%" }}
+        >
+          <Grid.Col span={4}>
+            <Image
+              style={
+                {
+                  // paddingBottom: "10%",
+                }
               }
-            }
-            radius="md"
-            src={`http://localhost:4000/svg/generate/${printColor}/fecha/${
-              form.values.lottery1 ? form.values.lottery1 : " "
-            }/${form.values.lottery2 ? form.values.lottery2 : " "}/${
-              form.values.encerrado ? form.values.encerrado : " "
-            }/000/${form.values.price ? form.values.price : " "}/${
-              form.values.prize ? form.values.prize : " "
-            }/`}
-            alt="Random unsplash image"
-          />
-        </Grid.Col>
-        <Grid.Col span={1}>
-          Color de la Muestra
-          <SegmentedControl
-            color={printColor}
-            onChange={(v) => setPrintColor(v)}
-            transitionDuration={250}
-            style={{ width: "100%" }}
-            data={[
-              { label: "Rojo", value: "red" },
-              { label: "Verde", value: "green" },
-              { label: "Azul", value: "blue" },
-            ]}
-          />
-          <Space h="xl" />
-          <form
-            // style={{
-            //   width: "100%",
-            //   height: "10%",
-            //   justifyContent: "left",
-            //   paddingBottom: "20%",
-            //   paddingTop: "5%",
-            // }}
-            onSubmit={form.onSubmit((values) => {
-              saveTemplates(values);
-              form.reset();
-            })}
-          >
-            <TextInput
-              required
-              label="Nombre Guardado"
-              placeholder="Nombre de la plantilla"
-              {...form.getInputProps("label")}
+              radius="md"
+              src={`http://localhost:4000/svg/generate/${printColor}/fecha/${
+                form.values.lottery1 ? form.values.lottery1 : " "
+              }/${form.values.lottery2 ? form.values.lottery2 : " "}/${
+                form.values.encerrado ? form.values.encerrado : " "
+              }/000/${form.values.price ? form.values.price : " "}/${
+                form.values.prize ? form.values.prize : " "
+              }/`}
+              alt="Random unsplash image"
             />
-            <TextInput
-              type="number"
-              {...form.getInputProps("prize")}
-              required
-              label="Valor del Premio"
-              // hideControls
-              // description="Mínimo 0, máximo 9999."
-              placeholder="Ingrese el valor del premio"
-              max={999999}
-              min={0}
+          </Grid.Col>
+          <Grid.Col span={1}>
+            Color de la Muestra
+            <SegmentedControl
+              color={printColor}
+              onChange={(v) => setPrintColor(v)}
+              transitionDuration={250}
+              style={{ width: "100%" }}
+              data={[
+                { label: "Rojo", value: "red" },
+                { label: "Verde", value: "green" },
+                { label: "Azul", value: "blue" },
+              ]}
             />
-            <TextInput
-              {...form.getInputProps("lottery1")}
-              data-autofocus
-              required
-              placeholder="Chontico"
-              label="Nombre superior"
-            />
-            <TextInput
-              data-autofocus
-              required
-              placeholder="Noche"
-              label="Nombre Inferior"
-              {...form.getInputProps("lottery2")}
-            />
-            <Group grow>
+            <Space h="xl" />
+            <form
+              // style={{
+              //   width: "100%",
+              //   height: "10%",
+              //   justifyContent: "left",
+              //   paddingBottom: "20%",
+              //   paddingTop: "5%",
+              // }}
+              onSubmit={form.onSubmit((values) => {
+                saveTemplates(values);
+                form.reset();
+              })}
+            >
               <TextInput
-                type="number"
-                {...form.getInputProps("price")}
                 required
-                label="Precio Boleta"
-                // description="Mínimo 0, máximo 999."
-                placeholder="Precio Boleta"
-                // hideControls
-                max={999}
-                min={0}
+                label="Nombre Guardado"
+                placeholder="Nombre de la plantilla"
+                {...form.getInputProps("label")}
               />
               <TextInput
                 type="number"
-                {...form.getInputProps("encerrado")}
+                {...form.getInputProps("prize")}
                 required
-                label="Valor Encerrado"
+                label="Valor del Premio"
                 // hideControls
                 // description="Mínimo 0, máximo 9999."
-                placeholder="Valor Encerrado"
-                max={9999}
+                placeholder="Ingrese el valor del premio"
+                max={999999}
                 min={0}
               />
-            </Group>
-            <Space h="md"></Space>
-            <Group grow>
-              <Popover
-                onClose={() => setEditPopOver(!editPopOver)}
-                withCloseButton
-                opened={editPopOver}
-                target={
-                  <Button
-                    fullWidth
-                    color="gray"
-                    onClick={() => {
-                      setEditPopOver(!editPopOver);
-                    }}
-                  >
-                    Plantillas
-                  </Button>
-                }
-              >
-                <ScrollArea style={{ height: 250 }}>
-                  <Table highlightOnHover>
-                    <thead>
-                      <tr>
-                        <th>
-                          {templateRows.length > 0
-                            ? "Nombre de plantilla"
-                            : "No existen plantillas creadas"}
-                        </th>
-                        <th></th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>{templateRows}</tbody>
-                  </Table>
-                </ScrollArea>
-              </Popover>
-              <Button
-                type="submit"
-                onClick={() => deleteTemplateById(form.values.value)}
-                onMouseEnter={() => {
-                  form.values.value
-                    ? ""
-                    : form.setFieldValue("value", nanoid());
-                }}
-              >
-                Guardar
-              </Button>
-            </Group>
-          </form>
-        </Grid.Col>
-      </Grid>
-    </div>
+              <TextInput
+                {...form.getInputProps("lottery1")}
+                data-autofocus
+                required
+                placeholder="Chontico"
+                label="Nombre superior"
+              />
+              <TextInput
+                data-autofocus
+                required
+                placeholder="Noche"
+                label="Nombre Inferior"
+                {...form.getInputProps("lottery2")}
+              />
+              <Group grow>
+                <TextInput
+                  type="number"
+                  {...form.getInputProps("price")}
+                  required
+                  label="Precio Boleta"
+                  // description="Mínimo 0, máximo 9999."
+                  placeholder="Precio Boleta"
+                  // hideControls
+                  max={9999}
+                  min={0}
+                />
+                <TextInput
+                  type="number"
+                  {...form.getInputProps("encerrado")}
+                  required
+                  label="Valor Encerrado"
+                  // hideControls
+                  // description="Mínimo 0, máximo 99999."
+                  placeholder="Valor Encerrado"
+                  max={99999}
+                  min={0}
+                />
+              </Group>
+              <Space h="md"></Space>
+              <Group grow>
+                <Popover
+                  onClose={() => setEditPopOver(!editPopOver)}
+                  withCloseButton
+                  opened={editPopOver}
+                  target={
+                    <Button
+                      fullWidth
+                      color="gray"
+                      onClick={() => {
+                        setEditPopOver(!editPopOver);
+                      }}
+                    >
+                      Plantillas
+                    </Button>
+                  }
+                >
+                  <ScrollArea style={{ height: 250 }}>
+                    <Table highlightOnHover>
+                      <thead>
+                        <tr>
+                          <th>
+                            {templateRows.length > 0
+                              ? "Nombre de plantilla"
+                              : "No existen plantillas creadas"}
+                          </th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>{templateRows}</tbody>
+                    </Table>
+                  </ScrollArea>
+                </Popover>
+                <Button
+                  type="submit"
+                  onClick={() => deleteTemplateById(form.values.value)}
+                  onMouseEnter={() => {
+                    form.values.value
+                      ? ""
+                      : form.setFieldValue("value", nanoid());
+                  }}
+                >
+                  Guardar
+                </Button>
+              </Group>
+            </form>
+          </Grid.Col>
+        </Grid>
+      </div>
+    </ScrollArea>
   );
 }
 

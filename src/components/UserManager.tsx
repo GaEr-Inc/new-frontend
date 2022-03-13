@@ -20,7 +20,7 @@ import {
   TransferListData,
   Transition,
 } from "@mantine/core";
-import { useForm, useId, useScrollLock } from "@mantine/hooks";
+import { useForm, useId, useScrollLock, useViewportSize } from "@mantine/hooks";
 import {
   ArrowUpIcon,
   EyeIcon,
@@ -125,7 +125,7 @@ function UserManager() {
     setuserBlues(blueGlobals);
     return user;
   };
-
+  const { height, width } = useViewportSize();
   const [opened, setOpened] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [userId, setUserId] = useState<string>("");
@@ -153,10 +153,11 @@ function UserManager() {
     user.numbers.blue.asignedNumbers = newBlues;
   };
   useScrollLock(true);
+  console.log(height, width);
   return (
     <div>
       <Divider my="sm" />
-      <ScrollArea style={{ height: 620 }} offsetScrollbars>
+      <ScrollArea style={{ height: height-180 }} offsetScrollbars>
         <Table highlightOnHover>
           <thead>
             <tr>

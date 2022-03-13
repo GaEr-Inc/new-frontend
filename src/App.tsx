@@ -27,7 +27,7 @@ import UserManager from "./components/UserManager";
 import NavButton from "./NavButton";
 import PrinterManager from "./components/PrinterManager";
 import Start from "./components/Start";
-import { useInterval } from "@mantine/hooks";
+import { useInterval, useViewportSize } from "@mantine/hooks";
 import { CONNECTION_STATE, TOKEN } from "./utils/globalStates";
 import { getToken, getUsers, resetDB, updateAll } from "./utils/requests";
 import reactIntegration, { useAgile } from "@agile-ts/react";
@@ -68,12 +68,13 @@ function App() {
     }
   }, 200);
 
-  const [opened, setOpened] = useState(false);
+  const { height, width } = useViewportSize();
+  const [opened, setOpened] = useState<boolean>(false);
   const theme = useMantineTheme();
   const { classes } = useStyles();
 
   useEffect(() => {
-    if (localStorage.getItem('dbreset') === null) {
+    if (localStorage.getItem("dbreset") === null) {
       resetDB();
       console.log("DB Reseted");
     }
@@ -86,8 +87,6 @@ function App() {
 
   const [dark, setDark] = useState<boolean>(false);
   const connectionStatus = useAgile(CONNECTION_STATE);
-
-
 
   return (
     <MantineProvider
@@ -106,31 +105,31 @@ function App() {
               padding="md"
               hiddenBreakpoint="sm"
               hidden={!opened}
-              width={{ sm: 40, lg: 260 }}
+              width={{ sm: 260, lg: 260 }}
             >
               <Navbar.Section grow>
-                <Link to="/" style={{ textDecoration: "none" }}>
+                <Link onClick={()=>setOpened(false)} to="/" style={{ textDecoration: "none"}}>
                   <NavButton
                     icon={<HomeIcon />}
                     color={"blue"}
                     label={"Inicio"}
                   />
                 </Link>
-                <Link to="/users" style={{ textDecoration: "none" }}>
+                <Link onClick={()=>setOpened(false)} to="/users" style={{ textDecoration: "none" }}>
                   <NavButton
                     icon={<PeopleIcon />}
                     color={"green"}
                     label={"Administrar Usuarios"}
                   />
                 </Link>
-                <Link to="/printer" style={{ textDecoration: "none" }}>
+                <Link onClick={()=>setOpened(false)} to="/printer" style={{ textDecoration: "none" }}>
                   <NavButton
                     icon={<FileSymlinkFileIcon />}
                     color="red"
                     label={"Imprimir"}
                   />
                 </Link>
-                <Link to="/templateEditor" style={{ textDecoration: "none" }}>
+                <Link onClick={()=>setOpened(false)} to="/templateEditor" style={{ textDecoration: "none" }}>
                   <NavButton
                     icon={<FileMediaIcon />}
                     color="grape"
@@ -174,7 +173,7 @@ function App() {
                   width: "100%",
                 }}
               >
-                <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+                <MediaQuery largerThan={768} styles={{ display: "none" }}>
                   <Burger
                     opened={opened}
                     onClick={() => setOpened((o) => !o)}

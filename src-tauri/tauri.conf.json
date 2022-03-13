@@ -94,11 +94,10 @@
     "windows": [
       {
         "title": "Raffle Manager",
-        "width": 1280,
-        "height": 720,
+        
+        "maximized": true,
         "resizable": true,
-        "fullscreen": false,
-        "center": true
+        "fullscreen": false
       }
     ],
     "security": {
