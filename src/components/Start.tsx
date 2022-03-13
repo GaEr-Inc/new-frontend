@@ -25,40 +25,40 @@ function Start() {
   const secondaryColor =
     theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.gray[7];
 
-  // const files = useValue(FILES);
-  const files = [
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-    "FILES",
-  ];
+  const files = useValue(FILES);
+  // const files = [
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  //   "FILES",
+  // ];
   useScrollLock(true);
 
   function appWidth() {
@@ -88,7 +88,7 @@ function Start() {
             </Alert>
           </Center>
         ) : (
-          <Center style={{ paddingLeft: "3%" }}>
+          <div style={{ paddingLeft: "3%" }}>
             <Grid>
               {files.map((file, index) => (
                 <Grid.Col
@@ -138,7 +138,7 @@ function Start() {
                 </Grid.Col>
               ))}
             </Grid>
-          </Center>
+          </div>
         )}
       </>
     </ScrollArea>
