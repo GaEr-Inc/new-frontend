@@ -28,7 +28,7 @@ import UserManager from "./components/UserManager";
 import NavButton from "./NavButton";
 import PrinterManager from "./components/PrinterManager";
 import Start from "./components/Start";
-import { useInterval, useViewportSize } from "@mantine/hooks";
+import { useInterval, useScrollLock, useViewportSize } from "@mantine/hooks";
 import { CONNECTION_STATE, TOKEN } from "./utils/globalStates";
 import { getToken, getUsers, resetDB, updateAll } from "./utils/requests";
 import reactIntegration, { useAgile } from "@agile-ts/react";
@@ -86,7 +86,6 @@ function App() {
 
   const [dark, setDark] = useState<boolean>(false);
   const connectionStatus = useAgile(CONNECTION_STATE);
-
   return (
     <MantineProvider
       theme={dark ? { colorScheme: "dark" } : { colorScheme: "light" }}

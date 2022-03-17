@@ -157,7 +157,7 @@ function UserManager() {
   return (
     <div>
       <Divider my="sm" />
-      <ScrollArea style={{ height: height-180 }} offsetScrollbars>
+      <ScrollArea style={{ height: height - 180 }} offsetScrollbars>
         <Table highlightOnHover>
           <thead>
             <tr>
@@ -262,101 +262,107 @@ function UserManager() {
         </Table>
       </ScrollArea>
       <Modal
+        centered
         opened={opened}
         onClose={() => {
           setOpened(false);
         }}
         title="Editar Usuario"
       >
-        <form
-          onSubmit={form.onSubmit(
-            (values: {
-              name: string;
-              number: string;
-              red: number;
-              green: number;
-              blue: number;
-            }) => {
-              const editedUser: User | undefined = currentUser
-                ? editUser(currentUser)
-                : undefined;
-              if (editedUser) {
-                editedUser.name = values.name;
-                editedUser.phoneNumber = values.number;
-                editedUser.maxRandomNumbers.red = values.red;
-                editedUser.maxRandomNumbers.green = values.green;
-                editedUser.maxRandomNumbers.blue = values.blue;
-                updateUser(editedUser);
-                userId === "nanoid"
-                  ? addUser(editedUser)
-                  : updateUserToDB(editedUser);
-                console.log(values);
-                setOpened(false);
-                form.reset();
+        <ScrollArea style={{ height: height - 100 }} offsetScrollbars>
+          <form
+            onSubmit={form.onSubmit(
+              (values: {
+                name: string;
+                number: string;
+                red: number;
+                green: number;
+                blue: number;
+              }) => {
+                const editedUser: User | undefined = currentUser
+                  ? editUser(currentUser)
+                  : undefined;
+                if (editedUser) {
+                  editedUser.name = values.name;
+                  editedUser.phoneNumber = values.number;
+                  editedUser.maxRandomNumbers.red = values.red;
+                  editedUser.maxRandomNumbers.green = values.green;
+                  editedUser.maxRandomNumbers.blue = values.blue;
+                  updateUser(editedUser);
+                  userId === "nanoid"
+                    ? addUser(editedUser)
+                    : updateUserToDB(editedUser);
+                  console.log(values);
+                  setOpened(false);
+                  form.reset();
+                }
               }
-            }
-          )}
-        >
-          <TextInput
-            required
-            label="Nombre"
-            placeholder="Antonio"
-            {...form.getInputProps("name")}
-          />
-          <TextInput
-            required
-            label="Numero"
-            placeholder="31000000"
-            {...form.getInputProps("number")}
-          />
-          <NumberInput
-            required
-            label="Numeros Aleatorios Rojos"
-            {...form.getInputProps("red")}
-          />
-          <NumberInput
-            required
-            label="Numeros Aleatorios Verdes"
-            {...form.getInputProps("green")}
-          />
-          <NumberInput
-            required
-            label="Numeros Aleatorios Azules"
-            {...form.getInputProps("blue")}
-          />
-          <Tabs>
-            <Tabs.Tab color="red" label="Rojos" icon={<ListUnorderedIcon />}>
-              <TransferList
-                searchPlaceholder="Busqueda..."
-                nothingFound="No se encontró..."
-                value={userReds}
-                onChange={setuserReds}
-              />
-            </Tabs.Tab>
-            <Tabs.Tab color="green" label="Verdes" icon={<ListUnorderedIcon />}>
-              <TransferList
-                searchPlaceholder="Busqueda..."
-                nothingFound="No se encontro"
-                value={userGreens}
-                onChange={setuserGreens}
-              />
-            </Tabs.Tab>
-            <Tabs.Tab label="Azules" icon={<ListUnorderedIcon />}>
-              <TransferList
-                searchPlaceholder="Busqueda..."
-                nothingFound="No se encontro"
-                value={userBlues}
-                onChange={setuserBlues}
-              />
-            </Tabs.Tab>
-          </Tabs>
-
-          <Button style={{ marginTop: 15 }} type="submit">
-            Submit
-          </Button>
-        </form>
+            )}
+          >
+            <TextInput
+              required
+              label="Nombre"
+              placeholder="Antonio"
+              {...form.getInputProps("name")}
+            />
+            <TextInput
+              required
+              label="Numero"
+              placeholder="31000000"
+              {...form.getInputProps("number")}
+            />
+            <NumberInput
+              required
+              label="Numeros Aleatorios Rojos"
+              {...form.getInputProps("red")}
+            />
+            <NumberInput
+              required
+              label="Numeros Aleatorios Verdes"
+              {...form.getInputProps("green")}
+            />
+            <NumberInput
+              required
+              label="Numeros Aleatorios Azules"
+              {...form.getInputProps("blue")}
+            />
+            <Tabs>
+              <Tabs.Tab color="red" label="Rojos" icon={<ListUnorderedIcon />}>
+                <TransferList
+                  searchPlaceholder="Busqueda..."
+                  nothingFound="No se encontró..."
+                  value={userReds}
+                  onChange={setuserReds}
+                />
+              </Tabs.Tab>
+              <Tabs.Tab
+                color="green"
+                label="Verdes"
+                icon={<ListUnorderedIcon />}
+              >
+                <TransferList
+                  searchPlaceholder="Busqueda..."
+                  nothingFound="No se encontro"
+                  value={userGreens}
+                  onChange={setuserGreens}
+                />
+              </Tabs.Tab>
+              <Tabs.Tab label="Azules" icon={<ListUnorderedIcon />}>
+                <TransferList
+                  searchPlaceholder="Busqueda..."
+                  nothingFound="No se encontro"
+                  value={userBlues}
+                  onChange={setuserBlues}
+                />
+              </Tabs.Tab>
+            </Tabs>
+            <Button style={{ marginTop: 15 }} type="submit">
+              Guardar
+            </Button>
+          </form>
+        </ScrollArea>
       </Modal>
-      <Affix position={{ bottom: 20, right: 50 }}>
+      <Affix style={{display: opened ? "none" : ""}} position={{ bottom: 20, right: 50 }}>
         <Button
           leftIcon={<PlusCircleIcon />}
           onClick={() => {

@@ -66,18 +66,18 @@ dayjs.updateLocale("en", {
     "Sábado",
   ],
   months: [
-    "de Enero de",
-    "de Febrero de",
-    "de Marzo de",
-    "de Abril de",
-    "de Mayo de",
-    "de Junio de",
-    "de Julio de",
-    "de Agosto de",
-    "de Septiembre de",
-    "de Octubre de",
-    "de Noviembre de",
-    "de Diciembre de",
+    "/Enero/",
+    "/Febrero/",
+    "/Marzo/",
+    "/Abril/",
+    "/Mayo/",
+    "/Junio/",
+    "/Julio/",
+    "/Agosto/",
+    "/Septiembre/",
+    "/Octubre/",
+    "/Noviembre/",
+    "/Diciembre/",
   ],
 });
 
@@ -445,12 +445,12 @@ function PrinterManager() {
                   setEighteenDates(withoutFormat);
                   const oldDays = days;
                   oldDays[index].date = dayjs(date)
-                    .format("DD MMMM YYYY")
+                    .format("dddd, DDMMMMYYYY")
                     .toString();
                   setDays(oldDays);
                   forceUpdate();
                 }}
-                inputFormat={"DD MMMM YYYY"}
+                inputFormat={"dddd, DDMMMMYYYY"}
                 dayClassName={(date, modifiers) =>
                   cx({
                     [classes.weekend]: modifiers.weekend,
@@ -521,12 +521,12 @@ function PrinterManager() {
                 placeholder="Fecha de la boleta"
                 onChange={(date: Date) => {
                   const oldDay = day;
-                  oldDay.date = dayjs(date).format("DD MMMM YYYY").toString();
+                  oldDay.date = dayjs(date).format("dddd, DDMMMMYYYY").toString();
                   setDay([oldDay]);
                   setOneDayDate(date);
                   oneForm.setFieldValue("date", oldDay.date);
                 }}
-                inputFormat={"DD MMMM YYYY"}
+                inputFormat={"dddd, DDMMMMYYYY"}
                 value={oneDayDate}
                 dayClassName={(date, modifiers) =>
                   cx({
