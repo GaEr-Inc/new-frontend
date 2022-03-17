@@ -269,7 +269,7 @@ function UserManager() {
         }}
         title="Editar Usuario"
       >
-        <ScrollArea style={{ height: height - 100 }} offsetScrollbars>
+        <ScrollArea style={{ height: height - 160 }} offsetScrollbars>
           <form
             onSubmit={form.onSubmit(
               (values: {
