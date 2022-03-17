@@ -198,7 +198,7 @@ function TemplateEditor() {
                 // hideControls
                 // description="Mínimo 0, máximo 9999."
                 placeholder="Ingrese el valor del premio"
-                max={999999}
+                max={9999999}
                 min={0}
               />
               <TextInput
@@ -224,7 +224,7 @@ function TemplateEditor() {
                   // description="Mínimo 0, máximo 9999."
                   placeholder="Precio Boleta"
                   // hideControls
-                  max={9999}
+                  max={19999}
                   min={0}
                 />
                 <TextInput
@@ -235,7 +235,7 @@ function TemplateEditor() {
                   // hideControls
                   // description="Mínimo 0, máximo 99999."
                   placeholder="Valor Encerrado"
-                  max={99999}
+                  max={999999}
                   min={0}
                 />
               </Group>
