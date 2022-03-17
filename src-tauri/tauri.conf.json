@@ -1,7 +1,7 @@
 {
   "package": {
     "productName": "frontend-mantine",
-    "version": "0.1.0"
+    "version": "0.1.5"
   },
   "build": {
     "distDir": "../dist",
@@ -61,8 +61,8 @@
         "open": true,
         "scope": [
           {
-            "name": "wsl",
-            "cmd": "wsl",
+            "name": "taskkill",
+            "cmd": "taskkill",
             "args": true
           },
           {
@@ -84,6 +84,16 @@
             "name": "cmd",
             "cmd": "cmd",
             "args": true
+          },
+          {
+            "name": "npm",
+            "cmd": "npm",
+            "args": true
+          },
+          {
+            "name": "dir",
+            "cmd": "dir",
+            "args": true
           }
         ],
         "sidecar": true
@@ -92,7 +102,6 @@
     "windows": [
       {
         "title": "Raffle Manager",
-        
         "maximized": true,
         "resizable": true,
         "fullscreen": false

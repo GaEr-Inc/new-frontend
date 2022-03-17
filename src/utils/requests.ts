@@ -21,12 +21,10 @@ export async function getFiles() {
   return (await axios.get(`${server}/files`)).data;
 }
 
-export function resetDB() {
-  axios.delete(`${server}/db/all`).then(res => 
-    {
-      if (res.status === 200)
-        localStorage.setItem('dbset', "done");
-    })
+export async function resetDB() {
+  axios.delete(`${server}/db/all`).then((res) => {
+    if (res.status === 200) localStorage.setItem("dbset", "done");
+  });
 }
 
 export function deleteFile(file: string) {
@@ -81,16 +79,19 @@ export function updateUserToDB(user: User) {
 }
 
 export function send1ToPrint(day: day, color: string) {
-  axios.post(`${server}/pdf/printone`, [{
-    date: day.date,
-    lottery1: day.lottery1,
-    lottery2: day.lottery2,
-    encerrado: day.encerrado,
-    number: 3,
-    cost: day.cost,
-    prize: day.prize,
-    template: day.template,
-  }, color]);
+  axios.post(`${server}/pdf/printone`, [
+    {
+      date: day.date,
+      lottery1: day.lottery1,
+      lottery2: day.lottery2,
+      encerrado: day.encerrado,
+      number: 3,
+      cost: day.cost,
+      prize: day.prize,
+      template: day.template,
+    },
+    color,
+  ]);
 }
 
 export function send18ToPrint(days: day[], color: string) {

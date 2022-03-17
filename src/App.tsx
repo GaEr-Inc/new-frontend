@@ -21,6 +21,7 @@ import {
   MoonIcon,
   PeopleIcon,
   SunIcon,
+  ToolsIcon,
 } from "@primer/octicons-react";
 import { Link, Route, Routes } from "react-router-dom";
 import UserManager from "./components/UserManager";
@@ -36,6 +37,7 @@ import * as _ from "lodash";
 import { restartBackend, stopBackend } from "./utils/commands";
 import { shared } from "@agile-ts/core";
 import { NotificationsProvider } from "@mantine/notifications";
+import Configuration from "./components/Configuration";
 
 export const useStyles = createStyles((theme) => ({
   button: {
@@ -74,10 +76,7 @@ function App() {
   const { classes } = useStyles();
 
   useEffect(() => {
-    if (localStorage.getItem("dbreset") === null) {
-      resetDB();
-      console.log("DB Reseted");
-    }
+    restartBackend();
     updateUsersInterval.start();
 
     return () => {
@@ -134,6 +133,13 @@ function App() {
                     icon={<FileMediaIcon />}
                     color="grape"
                     label={"Plantillas"}
+                  />
+                </Link>
+                <Link onClick={()=>setOpened(false)} to="/config" style={{ textDecoration: "none" }}>
+                  <NavButton
+                    icon={<ToolsIcon />}
+                    color="gray"
+                    label={"Configuracion"}
                   />
                 </Link>
               </Navbar.Section>
@@ -202,6 +208,7 @@ function App() {
             <Route path="/users" element={<UserManager />} />
             <Route path="/printer" element={<PrinterManager />} />
             <Route path="/templateEditor" element={<TemplateEditor />} />
+            <Route path="/config" element={<Configuration/>} />
           </Routes>
         </AppShell>
       </NotificationsProvider>
