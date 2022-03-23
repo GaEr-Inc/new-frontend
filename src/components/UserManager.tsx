@@ -127,6 +127,7 @@ function UserManager() {
   };
   const { height, width } = useViewportSize();
   const [opened, setOpened] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<User | undefined>();
   const [userId, setUserId] = useState<string>("");
   const updateUser = (user: User) => {
@@ -246,15 +247,23 @@ function UserManager() {
                       <PencilIcon />
                     </ActionIcon>
                   )}
-                  <ActionIcon
-                    color="blue"
-                    variant="filled"
-                    style={{ marginInline: 5 }}
-                    onClick={() => deleteUserById(user.id)}
-                    radius={10}
-                  >
-                    <TrashIcon />
-                  </ActionIcon>
+                  {deleting && user.id === userId ? (
+                    <Loader style={{ marginInline: 5 }} size="sm" />
+                  ) : (
+                    <ActionIcon
+                      color="blue"
+                      variant="filled"
+                      style={{ marginInline: 5 }}
+                      onClick={() => {
+                        setDeleting(true);
+                        setUserId(user.id)
+                        deleteUserById(user.id, setDeleting);
+                      }}
+                      radius={10}
+                    >
+                      <TrashIcon />
+                    </ActionIcon>
+                  )}
                 </td>
               </tr>
             ))}
@@ -362,7 +371,10 @@ function UserManager() {
           </form>
         </ScrollArea>
       </Modal>
-      <Affix style={{display: opened ? "none" : ""}} position={{ bottom: 20, right: 50 }}>
+      <Affix
+        style={{ display: opened ? "none" : "" }}
+        position={{ bottom: 20, right: 50 }}
+      >
         <Button
           leftIcon={<PlusCircleIcon />}
           onClick={() => {

@@ -47,8 +47,8 @@ export async function getNumbersByColor(
   return (await axios.get(`${server}/db/numbers/${color}`)).data;
 }
 
-export function deleteUserById(id: string) {
-  axios.delete(`${server}/db/users/delete/${id}`);
+export function deleteUserById(id: string, changeDelete: Function) {
+  axios.delete(`${server}/db/users/delete/${id}`).then(changeDelete(false));
 }
 
 export function updateUserToDB(user: User) {
