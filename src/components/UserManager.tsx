@@ -133,19 +133,19 @@ function UserManager() {
   const updateUser = (user: User) => {
     const newReds: number[] = [];
     userReds[1].map((num) =>
-      num.group === "Aleatorio"
+      num.group === "Aleatorios"
         ? console.log("Aleatorio")
         : newReds.push(parseInt(num.value))
     );
     const newGreens: number[] = [];
     userGreens[1].map((num) =>
-      num.group === "Aleatorio"
+      num.group === "Aleatorios"
         ? console.log("Aleatorio")
         : newGreens.push(parseInt(num.value))
     );
     const newBlues: number[] = [];
     userBlues[1].map((num) =>
-      num.group === "Aleatorio"
+      num.group === "Aleatorios"
         ? console.log("Aleatorio")
         : newBlues.push(parseInt(num.value))
     );
