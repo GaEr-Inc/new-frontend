@@ -18,6 +18,7 @@ import {
   FileMediaIcon,
   FileSymlinkFileIcon,
   HomeIcon,
+  InfoIcon,
   MoonIcon,
   PeopleIcon,
   SunIcon,
@@ -38,6 +39,8 @@ import { restartBackend, stopBackend } from "./utils/commands";
 import { shared } from "@agile-ts/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import Configuration from "./components/Configuration";
+import { client } from "./websockets/wsclient";
+import BackendStatus from "./components/BackendStatus";
 
 export const useStyles = createStyles((theme) => ({
   button: {
@@ -77,6 +80,7 @@ function App() {
 
   useEffect(() => {
     restartBackend();
+
     updateUsersInterval.start();
 
     return () => {
@@ -106,35 +110,66 @@ function App() {
               width={{ sm: 260, lg: 260 }}
             >
               <Navbar.Section grow>
-                <Link onClick={()=>setOpened(false)} to="/" style={{ textDecoration: "none"}}>
+                <Link
+                  onClick={() => setOpened(false)}
+                  to="/"
+                  style={{ textDecoration: "none" }}
+                >
                   <NavButton
                     icon={<HomeIcon />}
                     color={"blue"}
                     label={"Inicio"}
                   />
                 </Link>
-                <Link onClick={()=>setOpened(false)} to="/users" style={{ textDecoration: "none" }}>
+                <Link
+                  onClick={() => setOpened(false)}
+                  to="/users"
+                  style={{ textDecoration: "none" }}
+                >
                   <NavButton
                     icon={<PeopleIcon />}
                     color={"green"}
                     label={"Administrar Usuarios"}
                   />
                 </Link>
-                <Link onClick={()=>setOpened(false)} to="/printer" style={{ textDecoration: "none" }}>
+                <Link
+                  onClick={() => setOpened(false)}
+                  to="/printer"
+                  style={{ textDecoration: "none" }}
+                >
                   <NavButton
                     icon={<FileSymlinkFileIcon />}
                     color="red"
                     label={"Imprimir"}
                   />
                 </Link>
-                <Link onClick={()=>setOpened(false)} to="/templateEditor" style={{ textDecoration: "none" }}>
+                <Link
+                  onClick={() => setOpened(false)}
+                  to="/templateEditor"
+                  style={{ textDecoration: "none" }}
+                >
                   <NavButton
                     icon={<FileMediaIcon />}
                     color="grape"
                     label={"Plantillas"}
                   />
                 </Link>
-                <Link onClick={()=>setOpened(false)} to="/config" style={{ textDecoration: "none" }}>
+                <Link
+                  onClick={() => setOpened(false)}
+                  to="/backendStatus"
+                  style={{ textDecoration: "none" }}
+                >
+                  <NavButton
+                    icon={<InfoIcon/>}
+                    color="yellow"
+                    label={"Progreso"}
+                  />
+                </Link>
+                <Link
+                  onClick={() => setOpened(false)}
+                  to="/config"
+                  style={{ textDecoration: "none" }}
+                >
                   <NavButton
                     icon={<ToolsIcon />}
                     color="gray"
@@ -207,7 +242,8 @@ function App() {
             <Route path="/users" element={<UserManager />} />
             <Route path="/printer" element={<PrinterManager />} />
             <Route path="/templateEditor" element={<TemplateEditor />} />
-            <Route path="/config" element={<Configuration/>} />
+            <Route path="/backendStatus" element={<BackendStatus/>} />
+            <Route path="/config" element={<Configuration />} />
           </Routes>
         </AppShell>
       </NotificationsProvider>
