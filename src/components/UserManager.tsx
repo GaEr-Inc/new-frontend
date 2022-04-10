@@ -154,7 +154,7 @@ function UserManager() {
     user.numbers.blue.asignedNumbers = newBlues;
   };
   useScrollLock(true);
-  console.log(height, width);
+  // console.log(height, width);
   return (
     <div>
       <Divider my="sm" />

@@ -8,6 +8,7 @@ import {
   Grid,
   Group,
   Image,
+  Modal,
   NumberInput,
   Popover,
   ScrollArea,
@@ -18,7 +19,12 @@ import {
   Tabs,
   TextInput,
 } from "@mantine/core";
-import { useForm, useScrollLock, useViewportSize } from "@mantine/hooks";
+import {
+  useForm,
+  useLocalStorageValue,
+  useScrollLock,
+  useViewportSize,
+} from "@mantine/hooks";
 import { nanoid } from "nanoid";
 import { PencilIcon, TrashIcon } from "@primer/octicons-react";
 import * as lodash from "lodash";
@@ -35,13 +41,32 @@ export interface template {
   encerrado: string;
 }
 
+export interface ticketTemplate {
+  lin1: string;
+  lin2: string;
+  lin3: string;
+  pzDesc: string;
+  brandName: string;
+}
+
 function TemplateEditor() {
   const { height, width } = useViewportSize();
   const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
   );
+  const [ticketInfo, setTicketInfo] = useLocalStorageValue({
+    key: "tickets",
+    defaultValue: JSON.stringify({
+      lin1: "Resp: CRA.5E No. 6-59 Altos Guadalajara CEL.:304 3381617",
+      lin2: "Pagos de Premios de 3 a 6 p.m. de Lunes a Sábado",
+      lin3: "Cad. 8 días - Boleta Rota o enmendada no se paga",
+      pzDesc: "MERCADO DE",
+      brandName: "EL TREBOL",
+    }),
+  });
   const [printColor, setPrintColor] = useState<string>("red");
   const [editPopOver, setEditPopOver] = useState<boolean>(false);
+  const [editTicket, setEditTicket] = useState<boolean>(false);
   // const [error, setError] = useState<string>(null);
   const form = useForm({
     initialValues: {
@@ -74,6 +99,30 @@ function TemplateEditor() {
       encerrado: "Debe ingresar el precio del encerrado",
     },
   });
+
+  const ticketForm = useForm({
+    initialValues: {
+      lin1: JSON.parse(ticketInfo).lin1,
+      lin2: JSON.parse(ticketInfo).lin2,
+      lin3: JSON.parse(ticketInfo).lin3,
+      pzDesc: JSON.parse(ticketInfo).pzDesc,
+      brandName: JSON.parse(ticketInfo).brandName,
+    },
+    validationRules: {},
+    errorMessages: {},
+  });
+
+  function updateTicketInfo(values: ticketTemplate) {
+    setTicketInfo(
+      JSON.stringify({
+        lin1: values.lin1,
+        lin2: values.lin2,
+        lin3: values.lin3,
+        pzDesc: values.pzDesc,
+        brandName: values.brandName,
+      })
+    );
+  }
 
   function deleteTemplateById(id: string) {
     const newArray = lodash.filter(templateSaves, (o) => o.value !== id);
@@ -140,6 +189,97 @@ function TemplateEditor() {
           style={{ paddingTop: "6%" }}
         >
           <Grid.Col span={4}>
+            <Modal
+              title="Información Básica de la Boleta"
+              centered
+              size="500px"
+              opened={editTicket}
+              onClose={() => setEditTicket(!editTicket)}
+            >
+              <form
+                // style={{
+                //   width: "100%",
+                //   height: "10%",
+                //   justifyContent: "left",
+                //   paddingBottom: "20%",
+                //   paddingTop: "5%",
+                // }}
+                onSubmit={ticketForm.onSubmit((values) => {
+                  updateTicketInfo(values);
+                  ticketForm.setFieldValue("lin1", values.lin1);
+                  ticketForm.setFieldValue("lin2", values.lin2);
+                  ticketForm.setFieldValue("lin3", values.lin3);
+                  ticketForm.setFieldValue("pzDesc", values.pzDesc);
+                  ticketForm.setFieldValue("brandName", values.brandName);
+                  // ticketForm.reset();
+                  setEditTicket(!editTicket);
+                })}
+              >
+                <TextInput
+                  required
+                  label="Título de la Boleta"
+                  placeholder="Título de la Boleta"
+                  {...ticketForm.getInputProps("brandName")}
+                />
+                <TextInput
+                  required
+                  label="Descripción del Premio"
+                  placeholder="Descripción del Premio"
+                  {...ticketForm.getInputProps("pzDesc")}
+                />
+                <TextInput
+                  required
+                  label="Primera Línea Datos de Contacto"
+                  placeholder="Primera Línea Datos de Contacto"
+                  {...ticketForm.getInputProps("lin1")}
+                />
+                <TextInput
+                  required
+                  label="Segunda Línea Datos de Contacto"
+                  placeholder="Segunda Línea Datos de Contacto"
+                  {...ticketForm.getInputProps("lin2")}
+                />
+                <TextInput
+                  required
+                  label="Tercera Línea Datos de Contacto"
+                  placeholder="Tercera Línea Datos de Contacto"
+                  {...ticketForm.getInputProps("lin3")}
+                />
+                {/* <Button color="grape">Restablecer valores</Button>
+                <Button color="gray">Cancelar</Button>
+                <Button
+                  style={{ paddingLeft: "20%" }}
+                  type="submit"
+                >
+                  Guardar
+                </Button> */}
+                <div style={{ paddingTop: "15px" }}>
+                  <Group position="apart" spacing="xs">
+                    <Button
+                      onClick={() => {
+                        ticketForm.setFieldValue("lin1", "Resp: CRA.5E No. 6-59 Altos Guadalajara CEL.:304 3381617");
+                        ticketForm.setFieldValue("lin2", "Pagos de Premios de 3 a 6 p.m. de Lunes a Sábado");
+                        ticketForm.setFieldValue("lin3", "Cad. 8 días - Boleta Rota o enmendada no se paga");
+                        ticketForm.setFieldValue("pzDesc", "MERCADO DE");
+                        ticketForm.setFieldValue("brandName", "EL TREBOL" );
+                      }}
+                      color="grape"
+                    >
+                      Restablecer valores
+                    </Button>
+                    <Group position="right" spacing="xs">
+                      <Button
+                        color="gray"
+                        onClick={() => setEditTicket(!editTicket)}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button type="submit">Guardar</Button>
+                    </Group>
+                  </Group>
+                </div>
+              </form>
+            </Modal>
             <Image
               style={
                 {
@@ -153,12 +293,36 @@ function TemplateEditor() {
                 form.values.encerrado ? form.values.encerrado : " "
               }/000/${form.values.price ? form.values.price : " "}/${
                 form.values.prize ? form.values.prize : " "
-              }/`}
+              }/${JSON.parse(ticketInfo).lin1}/${JSON.parse(ticketInfo).lin2}/${
+                JSON.parse(ticketInfo).lin3
+              }/${JSON.parse(ticketInfo).pzDesc}/${
+                JSON.parse(ticketInfo).brandName
+              }`}
               alt="Random unsplash image"
             />
           </Grid.Col>
           <Grid.Col span={1}>
-            Color de la Muestra
+            {/* <div style={{ alignContent: "stretch" }}> */}
+            <Grid
+              grow
+              justify="center"
+              align="center"
+              gutter={0}
+              // style={{ paddingTop: "6%" }}
+            >
+              <Grid.Col span={11}>
+                <p>Editar Información de la Boleta</p>
+              </Grid.Col>
+              <Grid.Col span={1}>
+                <ActionIcon
+                  variant="light"
+                  onClick={() => setEditTicket(!editTicket)}
+                >
+                  <PencilIcon />
+                </ActionIcon>
+              </Grid.Col>
+            </Grid>
+            {/* </div> */}
             <SegmentedControl
               color={printColor}
               onChange={(v) => setPrintColor(v)}
@@ -295,3 +459,6 @@ function TemplateEditor() {
 }
 
 export default TemplateEditor;
+function useLocalStorage(arg0: { key: any }): [any, any] {
+  throw new Error("Function not implemented.");
+}
