@@ -158,7 +158,7 @@ function UserManager() {
   return (
     <div>
       <Divider my="sm" />
-      <ScrollArea style={{ height: height - 180 }} offsetScrollbars>
+      <ScrollArea style={{ height: height - 195 }} offsetScrollbars>
         <Table highlightOnHover>
           <thead>
             <tr>
@@ -270,6 +270,7 @@ function UserManager() {
           </tbody>
         </Table>
       </ScrollArea>
+      <Divider my="sm" />
       <Modal
         centered
         opened={opened}

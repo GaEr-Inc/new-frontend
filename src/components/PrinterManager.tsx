@@ -90,6 +90,11 @@ export interface day {
   cost: string;
   prize: string;
   template: string;
+  brandName: string;
+  lineDownText1: string;
+  lineDownText2: string;
+  lineDownText3: string;
+  prizeDescription: string;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -120,6 +125,14 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
   )
 );
 
+export interface ticketTemplate {
+  lin1: string;
+  lin2: string;
+  lin3: string;
+  pzDesc: string;
+  brandName: string;
+}
+
 function PrinterManager() {
   const { height, width } = useViewportSize();
   const forceUpdate = useForceUpdate();
@@ -130,6 +143,9 @@ function PrinterManager() {
   const [selectValue, setSelectValue] = useState<string>("");
   const [templateSaves, setTemplateSaves] = useState<template[]>(
     JSON.parse(localStorage.getItem("saves") || "[]")
+  );
+  const [ticketSaves, setTicketSaves] = useState<ticketTemplate>(
+    JSON.parse(localStorage.getItem("tickets") || "")
   );
   const [eighteenDates, setEighteenDates] = useState<Date[]>(Array(18));
   const notifications = useNotifications();
@@ -143,6 +159,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -153,6 +174,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -163,6 +189,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -173,6 +204,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -183,6 +219,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -193,6 +234,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -203,6 +249,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -213,6 +264,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -223,6 +279,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -233,6 +294,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -243,6 +309,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -253,6 +324,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -263,6 +339,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -273,6 +354,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -283,6 +369,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -293,6 +384,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -303,6 +399,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     {
       date: "",
@@ -313,6 +414,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
   ]);
 
@@ -326,6 +432,11 @@ function PrinterManager() {
       cost: "",
       prize: "",
       template: "red",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
     validationRules: {
       date: (value) => value.length > 0 && !(value === "Invalid Date"),
@@ -374,13 +485,18 @@ function PrinterManager() {
   const [day, setDay] = useState<day[]>([
     {
       date: "",
-      lottery1: "Bogota",
-      lottery2: "Javier",
+      lottery1: "Chontico",
+      lottery2: "Dia",
       encerrado: "3000",
       number: 5,
       cost: "600",
       prize: "260000",
       template: "blue",
+      brandName: "EL TREBOL",
+      lineDownText1: "Test Line 1",
+      lineDownText2: "Test Line 2",
+      lineDownText3: "Test Line 3",
+      prizeDescription: "MERCADO DE",
     },
   ]);
 
@@ -480,6 +596,11 @@ function PrinterManager() {
                         cost: selectedTemplate.price,
                         prize: selectedTemplate.prize,
                         template: printColor,
+                        brandName: ticketSaves.brandName,
+                        lineDownText1: ticketSaves.lin1,
+                        lineDownText2: ticketSaves.lin2,
+                        lineDownText3: ticketSaves.lin3,
+                        prizeDescription: ticketSaves.pzDesc,
                       },
                     ][0];
                     console.log("si", index);
@@ -521,7 +642,9 @@ function PrinterManager() {
                 placeholder="Fecha de la boleta"
                 onChange={(date: Date) => {
                   const oldDay = day;
-                  oldDay.date = dayjs(date).format("dddd, DDMMMMYYYY").toString();
+                  oldDay.date = dayjs(date)
+                    .format("dddd, DDMMMMYYYY")
+                    .toString();
                   setDay([oldDay]);
                   setOneDayDate(date);
                   oneForm.setFieldValue("date", oldDay.date);
@@ -596,6 +719,7 @@ function PrinterManager() {
                   icon: <CheckIcon />,
                 });
                 send1ToPrint(oneForm.values, printColor);
+                // console.log(oneForm.values, printColor);
               } else {
                 notifications.showNotification({
                   title: "No se puede generar el documento",
@@ -641,7 +765,7 @@ function PrinterManager() {
         </Grid.Col>
       </Grid>
       <Divider my="sm" />
-      <ScrollArea style={{ height: height - 220 }} offsetScrollbars>
+      <ScrollArea style={{ height: height - 235 }} offsetScrollbars>
         <Table highlightOnHover>
           <thead>
             <tr>
@@ -657,6 +781,7 @@ function PrinterManager() {
           <tbody>{rows}</tbody>
         </Table>
       </ScrollArea>
+      <Divider my="sm" />
     </div>
   );
 }

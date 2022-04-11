@@ -29,7 +29,7 @@ import UserManager from "./components/UserManager";
 import NavButton from "./NavButton";
 import PrinterManager from "./components/PrinterManager";
 import Start from "./components/Start";
-import { useInterval, useScrollLock, useViewportSize } from "@mantine/hooks";
+import { useInterval, useLocalStorageValue, useScrollLock, useViewportSize } from "@mantine/hooks";
 import { CONNECTION_STATE, TOKEN } from "./utils/globalStates";
 import { getToken, getUsers, resetDB, updateAll } from "./utils/requests";
 import reactIntegration, { useAgile } from "@agile-ts/react";
@@ -77,6 +77,16 @@ function App() {
   const [opened, setOpened] = useState<boolean>(false);
   const theme = useMantineTheme();
   const { classes } = useStyles();
+  const [ticketInfo, setTicketInfo] = useLocalStorageValue({
+    key: "tickets",
+    defaultValue: JSON.stringify({
+      lin1: "Resp: CRA.5E No. 6-59 Altos Guadalajara CEL.:304 3381617",
+      lin2: "Pagos de Premios de 3 a 6 p.m. de Lunes a Sábado",
+      lin3: "Cad. 8 días - Boleta Rota o enmendada no se paga",
+      pzDesc: "MERCADO DE",
+      brandName: "EL TREBOL",
+    }),
+  });
 
   useEffect(() => {
     restartBackend();

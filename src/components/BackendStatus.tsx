@@ -1,4 +1,4 @@
-import { Center, RingProgress, Text, ThemeIcon } from "@mantine/core";
+import { Button, Center, RingProgress, Text, ThemeIcon } from "@mantine/core";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Check } from "tabler-icons-react";
@@ -9,6 +9,7 @@ export default function BackendStatus() {
   const [onePdfStatus, setOnePdfStatus] = useState<number>(0);
   const [allImageStatus, setAllImageStatus] = useState<number>(0);
   const [allPdfStatus, setAllPdfStatus] = useState<number>(0);
+
   useEffect(() => {
     client.on("one-images", (message) => {
       console.log("IMAGES", message);
@@ -118,6 +119,7 @@ export default function BackendStatus() {
           )
         }
       />
+      <Button>Contar archivos</Button>
 
     </div>
   );
