@@ -1,4 +1,4 @@
-import { Button, Center, RingProgress, Text, ThemeIcon } from "@mantine/core";
+import { Center, Progress, RingProgress, Text, ThemeIcon } from "@mantine/core";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Check } from "tabler-icons-react";
@@ -32,95 +32,52 @@ export default function BackendStatus() {
   return (
     <div>
       {/* ONE DAY IMAGES GENERATION STATUS */}
-      <RingProgress
+      <h2>Generacion de Imagenes de Un Dia</h2>
+      <Progress
         sections={[
           {
             value: (oneImagesStatus / 1000) * 100,
             color: (oneImagesStatus / 1000) * 100 > 99 ? "green" : "blue",
           },
         ]}
-        label={
-          (oneImagesStatus / 1000) * 100 > 99 ? (
-            <Center>
-              <ThemeIcon color="teal" variant="light" radius="xl" size="xl">
-                <Check size={22} />
-              </ThemeIcon>
-            </Center>
-          ) : (
-            <Text color="blue" weight={700} align="center" size="xl">
-              {_.round((oneImagesStatus / 1000) * 100, 0)}%
-            </Text>
-          )
-        }
-      />
-      {/* ONE DAY PDF GENERATION STATUS */}
-      <RingProgress
-        sections={[
-          {
-            value: (onePdfStatus / 1000) * 100,
-            color: (onePdfStatus / 1000) * 100 > 99 ? "green" : "blue",
-          },
-        ]}
-        label={
-          (onePdfStatus / 1000) * 100 > 99 ? (
-            <Center>
-              <ThemeIcon color="teal" variant="light" radius="xl" size="xl">
-                <Check size={22} />
-              </ThemeIcon>
-            </Center>
-          ) : (
-            <Text color="blue" weight={700} align="center" size="xl">
-              {_.round((onePdfStatus / 1000) * 100, 0)}%
-            </Text>
-          )
-        }
-      />
+        // label={
+        //   (oneImagesStatus / 1000) * 100 > 99 ? (
+        //     <Center>
+        //       <ThemeIcon color="teal" variant="light" radius="xl" size="xl">
+        //         <Check size={22} />
+        //       </ThemeIcon>
+        //     </Center>
+        //   ) : (
+          //     <Text color="blue" weight={700} align="center" size="xl">
+          //       {_.round((oneImagesStatus / 1000) * 100, 0)}%
+          //     </Text>
+          //   )
+          // }
+          />
       {/* 18 DAYS IMAGES GENERATION STATUS */}
-      <RingProgress
+      <br />
+      <h2>Generacion de Imagenes de 18 Dias</h2>
+      <Progress
         sections={[
           {
             value: allImageStatus,
             color: allImageStatus > 99 ? "green" : "blue",
           },
         ]}
-        label={
-          allImageStatus > 99 ? (
-            <Center>
-              <ThemeIcon color="teal" variant="light" radius="xl" size="xl">
-                <Check size={22} />
-              </ThemeIcon>
-            </Center>
-          ) : (
-            <Text color="blue" weight={700} align="center" size="xl">
-              {_.round(allImageStatus, 0)}%
-            </Text>
-          )
-        }
+        // label={
+        //   allImageStatus > 99 ? (
+        //     <Center>
+        //       <ThemeIcon color="teal" variant="light" radius="xl" size="xl">
+        //         <Check size={22} />
+        //       </ThemeIcon>
+        //     </Center>
+        //   ) : (
+        //     <Text color="blue" weight={700} align="center" size="xl">
+        //       {_.round(allImageStatus, 0)}%
+        //     </Text>
+        //   )
+        // }
       />
-      {/* 18 DAYS PDF GENERATION STATUS */}
-      <RingProgress
-        sections={[
-          {
-            value: (allPdfStatus / 18000) * 100,
-            color: (allPdfStatus / 18000) * 100 > 99 ? "green" : "blue",
-          },
-        ]}
-        label={
-          (allPdfStatus / 18000) * 100 > 99 ? (
-            <Center>
-              <ThemeIcon color="teal" variant="light" radius="xl" size="xl">
-                <Check size={22} />
-              </ThemeIcon>
-            </Center>
-          ) : (
-            <Text color="blue" weight={700} align="center" size="xl">
-              {_.round((allPdfStatus / 1000) * 100, 0)}%
-            </Text>
-          )
-        }
-      />
-      <Button>Contar archivos</Button>
-
     </div>
   );
 }

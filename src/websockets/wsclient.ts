@@ -1,4 +1,4 @@
 import { io, Socket } from "socket.io-client";
 
-export const client = io('localhost:4000');
+export const client = io('http://localhost:4000');
 
